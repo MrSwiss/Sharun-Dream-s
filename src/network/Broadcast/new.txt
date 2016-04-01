@@ -1,0 +1,10 @@
+#include "Player.h"
+
+void _f(player_t *player)
+{
+	P_Buffer_t * buffer = New_WBuffer(S_NPC_LOCATION);
+
+	Player_Writer4(buffer, 0);
+
+	broadcast(buffer);
+}

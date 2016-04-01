@@ -1,0 +1,7 @@
+#include "Player.h"
+
+void _f(player_t *player)
+{
+	uint data = Player_Reader4(player);
+	Player_NextHeaderR(player);
+}
