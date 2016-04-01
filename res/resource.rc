@@ -1,0 +1,38 @@
+#include <windows.h>
+#include "resource.h"
+
+// Win32 application icon.
+
+STRINGTABLE { WINDOW_TITLE "Sharun Dream's" STR_VERSION LX_VERSION }
+IDI_ICON_App ICON                       "Elin.ico"
+IDI_ICON_Sub ICON                       "TERA.ico"
+
+// Executable version information.
+VS_VERSION_INFO    VERSIONINFO
+FILEVERSION        RX_VERSION
+PRODUCTVERSION     R_VERSION
+FILEFLAGSMASK      VS_FFI_FILEFLAGSMASK
+FILEFLAGS        VS_FF_DEBUG
+FILEOS             VOS_NT_WINDOWS32
+FILETYPE           VFT_APP
+FILESUBTYPE        VFT2_UNKNOWN
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904b0"
+    BEGIN
+      VALUE "InternalName", "Sharun Dream's"
+      VALUE "OriginalFilename", "Sharun_Dream.exe"
+      VALUE "CompanyName", "The Loli's Company"
+      VALUE "FileDescription", "Sharun Dream's"
+      VALUE "LegalCopyright", "©2014 The Loli's Company"
+      VALUE "ProductName", "Sharun Dream's"
+      VALUE "FileVersion", LX_VERSION
+      VALUE "ProductVersion", L_VERSION
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1200
+  END
+END
