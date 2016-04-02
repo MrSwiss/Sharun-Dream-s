@@ -21,7 +21,7 @@ RC = windres
 BIN2H = bin2h
 WARNS = -Wall
 #CFLAGS = -O3 
-CFLAGS = -g -g3 -ggdb -gdwarf-2 ${WARNS} $(MACHDEP) -std=gnu99 -DL_VERSION=\"$(L_VERSION)\" -DNDEBUG -DNO_ERROR_FILE
+CFLAGS = -g -g3 -ggdb -gdwarf-2 ${WARNS} $(MACHDEP) -std=gnu99 -Ibuild -DL_VERSION=\"$(L_VERSION)\" -DNDEBUG -DNO_ERROR_FILE
 #-DNO_ERROR
 
 #LDFLAGS_C = -O3 
@@ -66,7 +66,7 @@ WORK := $(addsuffix $(EXT), $(WORK))
 Virg = ,
 R_VERSION = $(subst .,$(Virg),$(L_VERSION))
 
-all: opcode build src/OpCodes/OpCodes_def_recv.h  src/OpCodes/OpCodes_def_send.h $(addsuffix .a, $(LIB)) ${WORK}
+all: opcode build build/OpCodes_def_recv.h  build/OpCodes_def_send.h $(addsuffix .a, $(LIB)) ${WORK}
 
 testX:
 	@echo ${TESTLST}
@@ -76,7 +76,7 @@ zip:
 
 opcode:
 	@echo Update OpCode
-	@rm -rf src/OpCodes/OpCodes_def_recv.h  src/OpCodes/OpCodes_def_send.h build/$(SYS)_OpCodes_Gen.o
+	@rm -rf build/OpCodes_def_recv.h  build/OpCodes_def_send.h build/$(SYS)_OpCodes_Gen.o
 
 unzip:
 	@echo Deleting SRC dir
@@ -95,18 +95,18 @@ Sharun_Dream$(EXT): ${OBJS} $(addsuffix .a, $(LIB))
 	@${C+} -o "$@" ${OBJS} ${LDFLAGS}
 
 clean: $(addsuffix .E, $(LIB))
-	@rm -rf src/OpCodes/OpCodes_def_recv.h src/OpCodes/OpCodes_def_send.h build ${WORK}
+	@rm -rf build ${WORK}
 
 build:
 	@mkdir $@
 
-src/OpCodes/OpCodes_def_recv.h:
+build/OpCodes_def_recv.h:
 	@echo $(notdir $@)
-	@echo -e $(addprefix "#define ", $(addsuffix _d_r\\n, $(OpCodes_def_recv_DIR))) > src/OpCodes/OpCodes_def_recv.h
+	@echo -e $(addprefix "#define ", $(addsuffix _d_r\\n, $(OpCodes_def_recv_DIR))) > build/OpCodes_def_recv.h
 
-src/OpCodes/OpCodes_def_send.h:
+build/OpCodes_def_send.h:
 	@echo $(notdir $@)
-	@echo -e $(addprefix "#define ", $(addsuffix _d_s\\n, $(OpCodes_def_send_DIR))) > src/OpCodes/OpCodes_def_send.h
+	@echo -e $(addprefix "#define ", $(addsuffix _d_s\\n, $(OpCodes_def_send_DIR))) > build/OpCodes_def_send.h
 
 %.a: Libs
 	@echo $(notdir $*)
