@@ -7,7 +7,7 @@ void S_SEND_USER_PLAY_TIME_f(player_t *player)
 
 	char *sql = "SELECT `online_time` FROM `characters` WHERE `object_id`='%i';";
 	char Query[strlen(sql)+MAX_UINT];
-	sprintf(Query, sql, player->Charcter_Id);
+	sprintf(Query, sql, player->Character_Id);
 
 	Player_Writer4(&buffer, SQL_int(Query));
 	Player_Writer8(&buffer, time(NULL));

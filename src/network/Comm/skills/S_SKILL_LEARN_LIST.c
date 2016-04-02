@@ -8,7 +8,7 @@ void S_SKILL_LEARN_LIST_f(player_t *player)
 
 	char *sql = "SELECT * FROM `skill_learn` WHERE `class` IN (-1, %i) AND `race` IN (-1, %i) AND `id`*10000+`lv`*100+`type` NOT IN (SELECT `skill_id`*10000+`lv`*100+`type` FROM `character_skill` WHERE `owner_id`='%i' AND `skill_id`=`id`) ORDER BY `id`, `lv`, `type`;";
 	char Query[strlen(sql)+MAX_UINT*3];
-	sprintf(Query, sql, player->Class_Id, player->Race_Id, player->Charcter_Id);
+	sprintf(Query, sql, player->Class_Id, player->Race_Id, player->Character_Id);
 	void *rslt = SQL_Query_Fast(Query, 1);
 	char **row;
 

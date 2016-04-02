@@ -10,8 +10,8 @@ void C_MOVE_INVEN_POS_f(player_t *player)
 	ushort slot2 = Player_Reader4(player); // Slot2
 	slot2--;
 
-			if (player->Item_slot[slot2].item) SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", slot1, player->Charcter_Id, player->Item_slot[slot2].id);
-			if (player->Item_slot[slot1].item) SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", slot2, player->Charcter_Id, player->Item_slot[slot1].id);
+			if (player->Item_slot[slot2].item) SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", slot1, player->Character_Id, player->Item_slot[slot2].id);
+			if (player->Item_slot[slot1].item) SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", slot2, player->Character_Id, player->Item_slot[slot1].id);
 
 	Item_slot_t Item_slot_tmp;
 	memcpy(&Item_slot_tmp, &player->Item_slot[slot1], sizeof(Item_slot_t));

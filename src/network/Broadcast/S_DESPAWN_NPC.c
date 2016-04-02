@@ -14,7 +14,7 @@ void *S_DESPAWN_NPC_f(player_t *player, NPC_t *npc)
 			Player_Writer4(buffer, npc->Id);
 			Player_Writer4(buffer, npc->SUBID);
 		} else {
-			Player_Writer4(buffer, player->Charcter_Id);
+			Player_Writer4(buffer, player->Character_Id);
 			Player_Writer4(buffer, player->SUBID);
 		}
 		for (int i=0; i<3; i++) {

@@ -18,7 +18,7 @@ void C_SAVE_CHAT_SETTING_f(player_t *player)
 		actual += player->Packet_R_Pos;
 	}
 	char FName[strlen(Cfg_Server_DirSave)+14+10+1];
-	sprintf(FName, "%s/CHAT_SETTING/%i", Cfg_Server_DirSave, player->Charcter_Id);
+	sprintf(FName, "%s/CHAT_SETTING/%i", Cfg_Server_DirSave, player->Character_Id);
 	FILE *fp = fopen(FName, "wb");
 	if (fp) {
 		ushort out = fwrite(data, 1, size, fp);

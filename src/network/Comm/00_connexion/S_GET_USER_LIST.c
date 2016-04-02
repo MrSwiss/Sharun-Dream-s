@@ -16,13 +16,13 @@ void S_GET_USER_LIST_f(player_t *player)
 	void *rslt2 = SQL_Query_Fast(Query2, 1);
 
 	ushort nextPos = 0;
-	player->Charcters_Count = SQL_Max_Row(rslt);
-	Player_Writer2(&buffer, player->Charcters_Count);
+	player->Characters_Count = SQL_Max_Row(rslt);
+	Player_Writer2(&buffer, player->Characters_Count);
 
 	// remeber where is next head in this  head
 	nextPos = buffer.Pos;
 	Player_Writer2(&buffer, 0);
-	if(!player->Charcters_Count) {
+	if(!player->Characters_Count) {
 		Player_Writer4(&buffer, 0);
 	} else {
 		Player_Writer4(&buffer, 1);

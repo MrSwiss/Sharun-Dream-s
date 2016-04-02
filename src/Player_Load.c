@@ -7,7 +7,7 @@ void Player_Load(player_t *player)
 
 	char *sql = "SELECT * FROM `characters`, `character_appearances`, `character_detail_2` WHERE `character_appearances`.`object_id`=`characters`.`object_id` AND `character_detail_2`.`object_id`=`characters`.`object_id` AND `characters`.`object_id`='%i';";
 	char Query[1024];
-	sprintf(Query, sql, player->Charcter_Id);
+	sprintf(Query, sql, player->Character_Id);
 	void *rslt = SQL_Query_Fast(Query, 1);
 	char **row = SQL_Next_Row(rslt);
 
@@ -42,7 +42,7 @@ void Player_Load(player_t *player)
  * LOAD ITEMS
  **/
 	char ** row2, *sql2 = "SELECT `character_items`.*, `characters`.`char_name` FROM `character_items`, `characters` WHERE `characters`.`object_id`=`character_items`.`binded` AND `owner_id` = '%i'";
-	sprintf(Query, sql2, player->Charcter_Id);
+	sprintf(Query, sql2, player->Character_Id);
 	void *rslt2 = SQL_Query_Fast(Query, 1);
 	player->money = 0;
 	player->Item_slot_count = 5;
@@ -92,7 +92,7 @@ void Player_Load(player_t *player)
 		player->skill[j].level = 0;
 	}
 	sql2 = "SELECT * FROM `character_skill` WHERE `owner_id` = '%i'";
-	sprintf(Query, sql2, player->Charcter_Id);
+	sprintf(Query, sql2, player->Character_Id);
 	rslt2 = SQL_Query_Fast(Query, 1);
 	while ((row2 = SQL_Next_Row(rslt2)))
 	{
@@ -110,7 +110,7 @@ void Player_Load(player_t *player)
     **/
 	player->skill2 = NULL;
 	sql2 = "SELECT * FROM `character_skill2` WHERE `owner_id` = '%i' ORDER BY `skill_id`";
-	sprintf(Query, sql2, player->Charcter_Id);
+	sprintf(Query, sql2, player->Character_Id);
 	rslt2 = SQL_Query_Fast(Query, 1);
 	skill_2_t *skill2 = NULL;
 	while ((row2 = SQL_Next_Row(rslt2)))

@@ -35,7 +35,7 @@ void *S_CHAT_f(player_t *player, ushort type, char *text, char *name)
 	Player_Writer4(buffer, type);
 
 	if (player) {
-		Player_Writer4(buffer, player->Charcter_Id);
+		Player_Writer4(buffer, player->Character_Id);
 		Player_Writer4(buffer, player->SUBID);
 	} else {
 		Player_Writer4(buffer, 0);

@@ -5,7 +5,7 @@ void *S_NPC_LOCATION_f(player_t *player, ushort type)
 	P_Buffer_t * buffer = New_WBuffer(S_NPC_LOCATION);
 
 	if (player) {
-		Player_Writer4(buffer, player->Charcter_Id);
+		Player_Writer4(buffer, player->Character_Id);
 		Player_Writer4(buffer, player->SUBID);
 	}
 

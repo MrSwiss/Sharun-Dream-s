@@ -18,7 +18,7 @@ void C_EQUIP_ITEM_f(player_t *player)
 	short dest_pos = -1;
 	bool changed = false;
 	if (!player->Item_slot[slot].item) return;
-	if (player->Item_slot[slot].binded && player->Item_slot[slot].binded != player->Charcter_Id) {
+	if (player->Item_slot[slot].binded && player->Item_slot[slot].binded != player->Character_Id) {
 		S_CHAT_to_Me_f(player, SYSTEM_CHAT, "You can't equip this item (not linked to your) !");
 		return;
 	}
@@ -109,8 +109,8 @@ void C_EQUIP_ITEM_f(player_t *player)
 	if (changed) {
 		ulong obj_id = 0;
 		if (dest_pos > -1) {
-			if (player->Item_slot[dest_pos].item) SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", slot, player->Charcter_Id, player->Item_slot[dest_pos].id);
-			if (player->Item_slot[slot].item) SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", dest_pos, player->Charcter_Id, player->Item_slot[slot].id);
+			if (player->Item_slot[dest_pos].item) SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", slot, player->Character_Id, player->Item_slot[dest_pos].id);
+			if (player->Item_slot[slot].item) SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", dest_pos, player->Character_Id, player->Item_slot[slot].id);
 			obj_id = player->Item_slot[slot].id;
 			Item_slot_t Item_slot_tmp;
 			memcpy(&Item_slot_tmp, &player->Item_slot[dest_pos], sizeof(Item_slot_t));

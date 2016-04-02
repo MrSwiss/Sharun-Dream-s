@@ -3,7 +3,7 @@
 void S_LOAD_CHAT_SETTING_f(player_t *player)
 {
 	char FName[strlen(Cfg_Server_DirSave)+14+10+1];
-	sprintf(FName, "%s/CHAT_SETTING/%i", Cfg_Server_DirSave, player->Charcter_Id);
+	sprintf(FName, "%s/CHAT_SETTING/%i", Cfg_Server_DirSave, player->Character_Id);
 	FILE *fp = fopen(FName, "rb");
 	if (fp) {
 		P_Buffer_t buffer;

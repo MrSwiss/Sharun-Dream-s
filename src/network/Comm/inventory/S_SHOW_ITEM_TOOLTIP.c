@@ -43,7 +43,7 @@ void S_SHOW_ITEM_TOOLTIP_f(player_t *player, char *name, uint itemID)
 	Player_Writer8(&buffer, Players[i]->Item_slot[index].id); // BE B4 4F 01
 	Player_Writer4(&buffer, Players[i]->Item_slot[index].item->id); // D8 33 00 00
 	Player_Writer8(&buffer, Players[i]->Item_slot[index].id); // BE B4 4F 01
-	Player_Writer4(&buffer, player->Charcter_Id); // 48 38 00 00
+	Player_Writer4(&buffer, player->Character_Id); // 48 38 00 00
 	Player_Writer4(&buffer, 0); // 00 00 00 00	SUB ID ?
 	Player_Writer4(&buffer, index); // 44 00 00 00
 	Player_Writer4(&buffer, 0); // 00 00 00 00

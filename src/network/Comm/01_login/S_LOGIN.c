@@ -26,11 +26,11 @@ void S_LOGIN_f(player_t *player)
 		Class_Race += player->Class_Id + 1;
 
 		Player_Writer4(&buffer, Class_Race); // Sex + Race + Class
-		Player_Writer4(&buffer, player->Account_Id);//player->Charcter_Id); // Account_id
+		Player_Writer4(&buffer, player->Account_Id);//player->Character_Id); // Account_id
 		Player_Writer4(&buffer, player->SUBID); // sub_object_id
 
 		Player_Writer4(&buffer, 20 + Cfg_Server_ID); // SERVER ID
-		Player_Writer4(&buffer, player->Charcter_Id); // Character_ID
+		Player_Writer4(&buffer, player->Character_Id); // Character_ID
 
 
 		Player_Writer4(&buffer, 0);
@@ -66,13 +66,13 @@ void S_LOGIN_f(player_t *player)
 		Player_Writer4(&buffer, 0x000001A3);// ?
 		Player_Writer8(&buffer, 0);// ?
 
-		Player_Writer4(&buffer, player->Item_slot[SLOT_WEAPON].item ? player->Item_slot[SLOT_WEAPON].item->id : 0);// DB_getEquipment(rslt2, SLOT_WEAPON, player->Charcter_Id)); // SLOT_WEAPON
-		Player_Writer4(&buffer, player->Item_slot[SLOT_ARMOR].item ? player->Item_slot[SLOT_ARMOR].item->id : 0);// DB_getEquipment(rslt2, SLOT_ARMOR, player->Charcter_Id)); // SLOT_ARMOR;
-		Player_Writer4(&buffer, player->Item_slot[SLOT_GLOVES].item ? player->Item_slot[SLOT_GLOVES].item->id : 0);// DB_getEquipment(rslt2, SLOT_GLOVES, player->Charcter_Id)); // SLOT_GLOVES;
-		Player_Writer4(&buffer, player->Item_slot[SLOT_BOOTS].item ? player->Item_slot[SLOT_BOOTS].item->id : 0);// DB_getEquipment(rslt2, SLOT_BOOTS, player->Charcter_Id)); // SLOT_BOOTS;
-		Player_Writer4(&buffer, player->Item_slot[SLOT_SHIRT].item ? player->Item_slot[SLOT_SHIRT].item->id : 0);// DB_getEquipment(rslt2, SLOT_SHIRT, player->Charcter_Id)); // SLOT_SHIRT;
-		Player_Writer4(&buffer, player->Item_slot[SLOT_HAT].item ? player->Item_slot[SLOT_HAT].item->id : 0);// DB_getEquipment(rslt2, SLOT_HAT, player->Charcter_Id)); // SLOT_HAT;
-		Player_Writer4(&buffer, player->Item_slot[SLOT_MASK].item ? player->Item_slot[SLOT_MASK].item->id : 0);// DB_getEquipment(rslt2, SLOT_MASK, player->Charcter_Id)); // SLOT_MASK;
+		Player_Writer4(&buffer, player->Item_slot[SLOT_WEAPON].item ? player->Item_slot[SLOT_WEAPON].item->id : 0);// DB_getEquipment(rslt2, SLOT_WEAPON, player->Character_Id)); // SLOT_WEAPON
+		Player_Writer4(&buffer, player->Item_slot[SLOT_ARMOR].item ? player->Item_slot[SLOT_ARMOR].item->id : 0);// DB_getEquipment(rslt2, SLOT_ARMOR, player->Character_Id)); // SLOT_ARMOR;
+		Player_Writer4(&buffer, player->Item_slot[SLOT_GLOVES].item ? player->Item_slot[SLOT_GLOVES].item->id : 0);// DB_getEquipment(rslt2, SLOT_GLOVES, player->Character_Id)); // SLOT_GLOVES;
+		Player_Writer4(&buffer, player->Item_slot[SLOT_BOOTS].item ? player->Item_slot[SLOT_BOOTS].item->id : 0);// DB_getEquipment(rslt2, SLOT_BOOTS, player->Character_Id)); // SLOT_BOOTS;
+		Player_Writer4(&buffer, player->Item_slot[SLOT_SHIRT].item ? player->Item_slot[SLOT_SHIRT].item->id : 0);// DB_getEquipment(rslt2, SLOT_SHIRT, player->Character_Id)); // SLOT_SHIRT;
+		Player_Writer4(&buffer, player->Item_slot[SLOT_HAT].item ? player->Item_slot[SLOT_HAT].item->id : 0);// DB_getEquipment(rslt2, SLOT_HAT, player->Character_Id)); // SLOT_HAT;
+		Player_Writer4(&buffer, player->Item_slot[SLOT_MASK].item ? player->Item_slot[SLOT_MASK].item->id : 0);// DB_getEquipment(rslt2, SLOT_MASK, player->Character_Id)); // SLOT_MASK;
 
 		Player_Writer4(&buffer, 0x1291E64A); // new
 		Player_Writer4(&buffer, 0);// new

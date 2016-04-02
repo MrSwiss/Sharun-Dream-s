@@ -11,6 +11,6 @@ void Character_Save(player_t *player)
 	char Query[strlen(sql)+strlen(XYZ[0])+strlen(XYZ[1])+strlen(XYZ[2])+MAX_UINT*6+MAX_ULONG*2];
 	long l_time = time(NULL) - player->loged;
 	player->loged += l_time;
-	sprintf(Query, sql, XYZ[0], XYZ[1], XYZ[2], player->World.heading, player->World.Zone->Id, player->Stats.HP, player->Stats.MP, player->Stats.Stamina[1], time(NULL), l_time, player->Charcter_Id);
+	sprintf(Query, sql, XYZ[0], XYZ[1], XYZ[2], player->World.heading, player->World.Zone->Id, player->Stats.HP, player->Stats.MP, player->Stats.Stamina[1], time(NULL), l_time, player->Character_Id);
 	SQL_Query_Slow(Query);
 }

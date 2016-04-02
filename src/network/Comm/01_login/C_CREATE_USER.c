@@ -49,7 +49,7 @@ void C_CREATE_USER_f(player_t *player)
 		char Query[2000];
 		SQL_Format_Char(Name);
 
-		sprintf(Query, SQL[0], player->Account_Id, sex, race, class, Name, player->Charcters_Count, Cfg_Server_ID);
+		sprintf(Query, SQL[0], player->Account_Id, sex, race, class, Name, player->Characters_Count, Cfg_Server_ID);
 		SQL_Query_Fast(Query, 0);
 
 		sprintf(Query, SQL[1], player->Account_Id, Name, Cfg_Server_ID);

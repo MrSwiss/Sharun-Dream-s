@@ -24,7 +24,7 @@ void C_UNEQUIP_ITEM_f(player_t *player)
 		else {
 			memcpy(&player->Item_slot[inv_pos], &player->Item_slot[slot], sizeof(Item_slot_t));
 			player->Item_slot[slot].item = NULL;
-			SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", inv_pos, player->Charcter_Id, player->Item_slot[slot].id);
+			SQL_Query_Slow2("UPDATE `character_items` SET `index` = '%i' WHERE `owner_id` = '%i' AND `object_id` = '%i';", inv_pos, player->Character_Id, player->Item_slot[slot].id);
 			obj_id = player->Item_slot[inv_pos].id;
 			changed = true;
 		}

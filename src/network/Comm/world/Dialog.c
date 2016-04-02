@@ -1,5 +1,5 @@
 #include "Player.h"
-
+/*
 void S_SPAWN_NPC_f(player_t *player, NPC_t *npc, bool isFriend)
 {
 	P_Buffer_t buffer;
@@ -47,4 +47,5 @@ void S_SPAWN_NPC_f(player_t *player, NPC_t *npc, bool isFriend)
 	Player_WriterSet2(&buffer, buffer.Pos - 8, shiftreplace);
 
 	Player_Send(player, &buffer);
-}
+}*/
+

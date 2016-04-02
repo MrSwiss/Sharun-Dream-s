@@ -2,7 +2,7 @@
 
 void C_SELECT_USER_f(player_t *player)
 {
-	player->Charcter_Id = Player_Reader4(player);
+	player->Character_Id = Player_Reader4(player);
 	Player_NextHeaderR(player);
 
 	OpCodes_Write(player, S_SELECT_USER);

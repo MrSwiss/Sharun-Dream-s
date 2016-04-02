@@ -31,7 +31,7 @@ void S_INVEN_f(player_t *player, short show)
 	
 	nextPos = buffer.Pos;
 	Player_Writer2(&buffer, 0);
-	Player_Writer4(&buffer, player->Charcter_Id);
+	Player_Writer4(&buffer, player->Character_Id);
 	Player_Writer4(&buffer, player->SUBID);
 
 	Player_Writer8(&buffer, player->money);
@@ -66,7 +66,7 @@ void S_INVEN_f(player_t *player, short show)
 
 			Player_Writer4(&buffer, player->Item_slot[index].item->id);
 			Player_Writer8(&buffer, player->Item_slot[index].id);
-			Player_Writer4(&buffer, player->Charcter_Id);
+			Player_Writer4(&buffer, player->Character_Id);
 			Player_Writer4(&buffer, player->SUBID);
 			Player_Writer4(&buffer, index+1);//i + 1);
 			Player_Writer4(&buffer, 0);

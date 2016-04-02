@@ -60,7 +60,7 @@ void World_Spam(player_t *player)
 		char Query[100];
 		sprintf(Query, "UPDATE `Server_Stats` SET `Player_Count`=`Player_Count`+1 WHERE `Server_ID`='%i';", Cfg_Server_ID);
 		SQL_Query_Fast(Query, 0);
-		sprintf(Query, "INSERT INTO `Server_Used_Character` VALUES ('%i', '%i');", Cfg_Server_ID, player->Charcter_Id);
+		sprintf(Query, "INSERT INTO `Server_Used_Character` VALUES ('%i', '%i');", Cfg_Server_ID, player->Character_Id);
 		SQL_Query_Fast(Query, 0);
 		World_Info(player);
 	}
@@ -192,7 +192,7 @@ void World_Exit(player_t *player)
 	sprintf(Query, "UPDATE `Server_Stats` SET `Player_Count`=`Player_Count`-1 WHERE `Server_ID`='%i';", Cfg_Server_ID);
 	SQL_Query_Fast(Query, 0);
 
-	sprintf(Query, "DELETE FROM `Server_Used_Character` WHERE `Character_ID`='%i' AND `Server_ID`='%i';", player->Charcter_Id, Cfg_Server_ID);
+	sprintf(Query, "DELETE FROM `Server_Used_Character` WHERE `Character_ID`='%i' AND `Server_ID`='%i';", player->Character_Id, Cfg_Server_ID);
 	SQL_Query_Fast(Query, 0);
 
 }

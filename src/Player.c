@@ -137,7 +137,7 @@ void Player_Login(netlink_t *NetLink)
 {
 	player_t *player = malloc(sizeof(player_t));
 	player->NetLink = NetLink;
-	player->strcut_type = 1;
+	player->struct_type = 1;
 	player->TERACrypt = NULL;
 	player->OpCode_GID = -1;
 	player->Account_Id = 0;

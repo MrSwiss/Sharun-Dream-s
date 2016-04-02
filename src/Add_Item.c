@@ -69,7 +69,7 @@ void Add_Item(player_t *player, uint ID, short count)
 			}
 			SQL_Query_Slow2("INSERT INTO `character_items` VALUES ('%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i')",
 				player->Item_slot[inv_pos].id,
-				player->Charcter_Id,
+				player->Character_Id,
 				player->Item_slot[inv_pos].item->id,
 				player->Item_slot[inv_pos].count,
 				player->Item_slot[inv_pos].enchant[0],
