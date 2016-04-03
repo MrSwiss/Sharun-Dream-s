@@ -108,7 +108,7 @@ void Player_Recv(player_t *player)
 	player->Packet_R_Pos = 4;
 	player->Packet_R_HeadPos = 0;
 	player->Packet_R_Size = recv(player->NetLink->sock, (char*)player->Packet_R, Packet_Max_Size, 0);
-	if (player->Packet_R_Size >= 0) {
+	if (player->Packet_R_Size > 0) {
 		TeraCrypt_Dec(player->TERACrypt, player->Packet_R, player->Packet_R_Size);
 		const char *name = OpCodes_FindName(player);
 		if ( !name || ( name
@@ -190,7 +190,7 @@ void Player_Login(netlink_t *NetLink)
 		free(Key);
 
 		Player_Recv(player);
-		if (player->Packet_R_Size >= 0) {
+		if (player->Packet_R_Size > 0) {
 			PACKET_h *PACKET_H = (PACKET_h*)&player->Packet_R[player->Packet_R_HeadPos];
 			player->Packet_R_HeadPos += PACKET_H->Size;
 			PACKET_H = (PACKET_h*)&player->Packet_R[player->Packet_R_HeadPos];
@@ -209,7 +209,7 @@ void Player_Login(netlink_t *NetLink)
 			}
 			long Still_Online;
 			player->Still_Online = &Still_Online;
-			while (rrun && player->Packet_R_Size >= 0) {
+			while (rrun && player->Packet_R_Size > 0) {
 				Still_Online = time(NULL);
 				Player_Recv(player);
 				if (!Still_Online) {
@@ -229,7 +229,7 @@ void Player_Login(netlink_t *NetLink)
 						return;
 					}
 					OpCodes_Read(player);
-				} while (player->Packet_R_Size >= 0 && player->Packet_R_Pos < player->Packet_R_Size);
+				} while (player->Packet_R_Size > 0 && player->Packet_R_Pos < player->Packet_R_Size);
 			}
 		}
 	} else
