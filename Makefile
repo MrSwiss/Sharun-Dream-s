@@ -27,7 +27,7 @@ LDFLAGS_C = -g -g3 -ggdb -gdwarf-2 -pthread -lpthread -lz -lm $(addprefix -L${Su
 ifeq ($(OS), Windows_NT)
 	CFLAGS += -D WIN32 -D _WIN32_IE=0x0501 -D WINVER=0x600 -D _WIN32_WINNT=0x600 -D UNICODE -D _UNICODE
 	LDFLAGS_C += -s -L./${SubDir} -L./lib/win32 -L/usr/lib -lws2_32 -static-libgcc -static-libstdc++
-	LDFLAGS += $(LDFLAGS_C) -lmysql
+	LDFLAGS += $(LDFLAGS_C) -ldl
 #	-mwindows -Wl,--subsystem,windows
 	OBJS += ${OBJS_W}
 	SYS := win32

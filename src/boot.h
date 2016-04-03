@@ -45,7 +45,7 @@ void	close_Items();
 void	init_Broadcast();
 void	close_Broadcast();
 
-int		SQL_Init(const char *host, short port, const char *name, const char *pass, const char *db, short thr, short sthr);
+int		SQL_Init(const char *host, const ushort port, const char *name, const char *pass, const char *db, short thr, short sthr);
 void	SQL_Close();
 
 #endif // __BOOT_H__

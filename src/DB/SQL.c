@@ -2,7 +2,30 @@
 #include <mysql.h>
 #include <stdarg.h>
 
-int		MySQL_Init(const char *host, short port, const char *name, const char *pass, const char *db, short thr, short sthr);
+
+extern void		(*l_mysql_close)(MYSQL *sock);
+extern void		(*l_mysql_data_seek)(MYSQL_RES *result, my_ulonglong offset);
+extern const char *	(*l_mysql_error)(MYSQL *mysql);
+extern MYSQL_ROW	(*l_mysql_fetch_row)(MYSQL_RES *result);
+extern void		(*l_mysql_free_result)(MYSQL_RES *result);
+extern MYSQL *		(*l_mysql_init)(MYSQL *mysql);
+extern my_ulonglong	(*l_mysql_num_rows)(MYSQL_RES *res);
+extern int		(*l_mysql_options)(MYSQL *mysql, enum mysql_option option, const void *arg);
+extern int		(*l_mysql_query)(MYSQL *mysql, const char *q);
+extern MYSQL *		(*l_mysql_real_connect)(MYSQL *mysql, const char *host,
+					   const char *user,
+					   const char *passwd,
+					   const char *db,
+					   const unsigned int port,
+					   const char *unix_socket,
+					   unsigned long clientflag);
+extern MYSQL_ROW_OFFSET (*l_mysql_row_seek)(MYSQL_RES *result, MYSQL_ROW_OFFSET offset);
+extern int		(*l_mysql_set_character_set)(MYSQL *mysql, const char *csname);
+extern MYSQL_RES *     (*l_mysql_store_result)(MYSQL *mysql);
+extern MYSQL_RES *     (*l_mysql_use_result)(MYSQL *mysql);
+
+
+int		MySQL_Init(const char *host, ushort port, const char *name, const char *pass, const char *db, short thr, short sthr);
 char ***MySQL_Query_Fast(char *Query, int result);
 void	MySQL_Query_Slow(char *Query);
 void	MySQL_Close();
@@ -26,7 +49,7 @@ SQL_QUEUE *SQL_NewQueue(char *Query)
 	return sql_q;
 }
 
-int SQL_Init(const char *host, short port, const char *name, const char *pass, const char *db, short thr, short sthr)
+int SQL_Init(const char *host, const ushort port, const char *name, const char *pass, const char *db, short thr, short sthr)
 {
 	int ret = 0;
 	ret = MySQL_Init(host, port, name, pass, db, thr, sthr);
@@ -40,20 +63,18 @@ void SQL_Close()
 
 uint SQL_Max_Row(void *Result)
 {
-	return mysql_num_rows(Result);
+	return l_mysql_num_rows(Result);
 }
 
 void SQL_Seek(void *Result, ulong pos)
 {
-#ifndef WIN32
-	mysql_data_seek(Result, pos);
-#endif // WIN32
+	l_mysql_data_seek(Result, pos);
 }
 
 void *SQL_Next_Row(void *Result)
 {
 	MYSQL_ROW row;
-	if (Result && (row = mysql_fetch_row(Result)) != NULL)
+	if (Result && (row = l_mysql_fetch_row(Result)) != NULL)
 		return row;
 	return NULL;
 }
@@ -61,7 +82,7 @@ void *SQL_Next_Row(void *Result)
 void SQL_Result_Clear(void *Result)
 {
 	if (Result) {
-		mysql_free_result(Result);
+		l_mysql_free_result(Result);
 	}
 }
 

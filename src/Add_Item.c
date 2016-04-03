@@ -16,7 +16,7 @@ void Add_Item_Init()
 
 void Add_Item_Close()
 {
-	Mutex_Close(Item_ID_Act_mtx);
+	if (Item_ID_Act_mtx) Mutex_Close(Item_ID_Act_mtx);
 	Item_ID_Act_mtx = NULL;
 	Item_ID_Act = 1;
 }

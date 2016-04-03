@@ -26,6 +26,7 @@ FILE * FError = NULL;
 
 char exiting(char ret)
 {
+	main_stop = true;
 	DEBUG(NULL);
 	Network_Close();
 	Add_Item_Close();
@@ -43,7 +44,6 @@ char exiting(char ret)
 void intHandler()
 {
 	if (main_stop) return;
-	main_stop = true;
 	Network_Stop();
 	exiting(0);
 }
@@ -127,15 +127,18 @@ int main(int argc, const char **argv)
 	if (Cfg_DataBase_Fast_Thread < SQL_MIN_THREAD && Cfg_DataBase_Slow_Thread < 1) {
 		DEBUG("%s (%i) :: No enough SQL Thread (min:%i, Cfg:%i) (slow: min:1, Cfg:%i) !\n", __func__, __LINE__,
 			SQL_MIN_THREAD, Cfg_DataBase_Fast_Thread, Cfg_DataBase_Slow_Thread);
-		return 1;
+		return exiting(1);
 	}
 
 	init_Broadcast();
 	Network_Init();
 
 	if (SQL_Init(Cfg_DataBase_IP, Cfg_DataBase_Port, Cfg_DataBase_Login, Cfg_DataBase_Pass,
-	    Cfg_DataBase_Name, Cfg_DataBase_Fast_Thread, Cfg_DataBase_Slow_Thread) < SQL_MIN_THREAD)
+	    Cfg_DataBase_Name, Cfg_DataBase_Fast_Thread, Cfg_DataBase_Slow_Thread) < SQL_MIN_THREAD) {
+		DEBUG("%s (%i) :: No enough SQL Thread (min:%i) (maybe a error with sql connection/load) !\n", __func__, __LINE__,
+			SQL_MIN_THREAD);
 		return exiting(1);
+	}
 
 	Add_Item_Init();
 
