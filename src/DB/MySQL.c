@@ -39,11 +39,9 @@ void MySQL_Thread_API(ushort *MT_id)
 		}
 		SQL_Mutex_Unlock(Fast);
 		if (sql_q) {
-DEBUG("%s (%i) :: \"%s\"\n", __func__, __LINE__, sql_q->Query);
 			mysql_query(conn[thread_id], sql_q->Query);
 			if (mysql_error(conn[thread_id])[0])
 				DEBUG("%s (%i) :: %s : \"%s\"\n", __func__, __LINE__, mysql_error(conn[thread_id]), sql_q->Query);
-DEBUG("%s (%i) :: \"%s\"\n", __func__, __LINE__, sql_q->Query);
 			if (!Fast || sql_q->result == 2)
 				res = mysql_use_result(conn[thread_id]);
 			else
@@ -142,7 +140,6 @@ char ***MySQL_Query_Fast(char *Query, char result)
 void MySQL_Query_Slow(char *Query)
 {
 	SQL_QUEUE *sql_q = SQL_NewQueue(Query);
-DEBUG("%s (%i) :: \"%s\"\n", __func__, __LINE__, sql_q->Query);
 	SQL_Mutex_Lock(false);
 	if (!MySQL_Slow) MySQL_Slow = sql_q;
 	else {
