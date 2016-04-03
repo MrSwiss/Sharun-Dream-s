@@ -52,7 +52,7 @@ typedef struct player_t {
 	short	OpCode_GID;
 	void*	send_locker;
 	ushort	Packet_R_Pos;
-	ushort	Packet_R_Size;
+	int	Packet_R_Size;
 	ushort	Packet_R_HeadPos;
 	byte	Packet_R[Packet_Max_Size];
 } player_t;

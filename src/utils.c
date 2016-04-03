@@ -326,6 +326,19 @@ long microsec()
 	return microsec;
 }
 
+char* l_realpath(char * src)
+{
+	char * buffer;
+#ifdef WIN32
+	buffer = malloc(4092);
+	GetFullPathNameA(src, 4092, buffer, NULL);
+	buffer = realloc(buffer, strlen(buffer)+1);
+#else
+	buffer = realpath(src, NULL);
+#endif
+	return buffer;
+}
+
 void hexdump(const char* function, const char* title, const void *Vbuffer, unsigned long index)
 {
 	const unsigned char *buffer = Vbuffer;
@@ -353,3 +366,4 @@ void hexdump(const char* function, const char* title, const void *Vbuffer, unsig
 	}
 	DEBUG2("\n");
 }
+

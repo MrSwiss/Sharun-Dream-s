@@ -109,7 +109,7 @@ float	getDistance_2D(float *s, float *t);
 float	getDistance_3D(float *s, float *t);
 
 void	Stats_Update(player_t *);
-void*	Regen_Player(void *);
+void	Regen_Player(player_t *);
 void	Character_Save(player_t *);
 void	USER_SETTING_Saved(player_t *, ushort);
 

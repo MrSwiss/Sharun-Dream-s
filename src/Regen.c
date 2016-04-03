@@ -66,9 +66,8 @@ void regen_sp(player_t *player)
 	}
 }
 
-void *Regen_Player(void *arg)
+void Regen_Player(player_t *player)
 {
-	player_t *player = (player_t *)arg;
 	char regen_time = 0;
 	while (player->Account_Id) {
 		long l_time = microsec();
@@ -95,5 +94,4 @@ void *Regen_Player(void *arg)
 		usleep((l_time + 1000000 - microsec()));
 	}
 	c_THREAD_free(NULL);
-	return NULL;
 }

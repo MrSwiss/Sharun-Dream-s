@@ -161,10 +161,11 @@ size_t	file_size(const char *);
 float	atof2(char*);
 short	is_atoi(char*);
 long	microsec();
+char*	l_realpath(char*);
 void	hexdump(const char* function, const char* title, const void *buffer, unsigned long index);
 
 uint	SQL_Max_Row(void *);
-void	SQL_Seek(void *, int);
+void	SQL_Seek(void *, ulong);
 void*	SQL_Next_Row(void *);
 void	SQL_Result_Clear(void *);
 void	SQL_toFloat(char *);

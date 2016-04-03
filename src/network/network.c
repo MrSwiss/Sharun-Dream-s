@@ -146,9 +146,13 @@ void Network_Detect(netlink_t *NetLink)
 			HTTP_Work(NetLink);
 		} else {
 			// unsupported connexion
+DEBUG("%s (%i)\n", __func__, __LINE__);
 			NetLink_close(NetLink);
+DEBUG("%s (%i)\n", __func__, __LINE__);
 			free(NetLink);
+DEBUG("%s (%i)\n", __func__, __LINE__);
 			c_THREAD_free(NULL);
+DEBUG("%s (%i)\n", __func__, __LINE__);
 		}
 	}
 #endif
@@ -161,11 +165,7 @@ void Network_Run()
 	Test_Thread = CreateThread(NULL, 0, (void*)Network_Test, (void*)1, 0, NULL);
 	while (net_run) {
 		struct sockaddr_in csin = { 0 };
-/*#ifdef WIN32
-	#define csin_s NULL
-#else*/
-		socklen_t csin_s = sizeof(csin);
-//#endif
+		int csin_s = sizeof(csin);
 		if (sock >= 0) {
 			SOCKET csock = accept(sock, (struct sockaddr *)&csin, &csin_s);
 			if(csock == -1) {

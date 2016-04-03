@@ -90,7 +90,7 @@ int main(int argc, const char **argv)
 	time ( &rawtime );
 	t_info = localtime ( &rawtime );
 	char filename[strlen(Cfg_Server_DirSave)+30];
-	sprintf(filename, "%sLogs/%04i-%02i-%02i_%02i:%02i:%02i.log", Cfg_Server_DirSave, t_info->tm_year+1900, t_info->tm_mon+1, t_info->tm_mday, t_info->tm_hour, t_info->tm_min, t_info->tm_sec);
+	sprintf(filename, "%sLogs/%04i-%02i-%02i_%02i.%02i.%02i.log", Cfg_Server_DirSave, t_info->tm_year+1900, t_info->tm_mon+1, t_info->tm_mday, t_info->tm_hour, t_info->tm_min, t_info->tm_sec);
 	if (FError != stderr) {
 #ifndef NO_ERROR
 		FError = fopen(filename, "w");

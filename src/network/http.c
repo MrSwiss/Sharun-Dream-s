@@ -6,6 +6,7 @@
 
 #include <stdarg.h>
 #include <sys/stat.h>
+#include <limits.h>
 
 #define write_head(sock, text) write(sock, text, strlen(text))
 
@@ -28,7 +29,7 @@ void HTTP_DateTime_Char(SOCKET sock, bool transformed, const char *file)
 
 	stat(file, &st);
 	t_info = localtime (&st.st_ctime);
-	strftime (buffer, 80, "Date:    , %g     %Y %T %Z\n", t_info);
+	strftime (buffer, 80, "Date:    , %d     %Y %H:%M:%S %Z\n", t_info);
 	strncpy(buffer+2+4, wday_name[t_info->tm_wday], 3);
 	strncpy(buffer+10+4, mon_name[t_info->tm_mon], 3);
 	write_head(sock, buffer);
@@ -38,7 +39,7 @@ void HTTP_DateTime_Char(SOCKET sock, bool transformed, const char *file)
 		t_info = localtime (&rawtime);
 	} else
 		t_info = localtime (&st.st_mtime);
-	strftime (buffer, 80, "Last-Modified:    , %g     %Y %T %Z\n", t_info);
+	strftime (buffer, 80, "Last-Modified:    , %d     %Y %H:%M:%S %Z\n", t_info);
 	strncpy(buffer+2+13, wday_name[t_info->tm_wday], 3);
 	strncpy(buffer+10+13, mon_name[t_info->tm_mon], 3);
 	write_head(sock, buffer);
@@ -174,7 +175,7 @@ void HTTP_Work(netlink_t *NetLink)
 	ushort filename_s = strlen(Cfg_Server_DirSave)+3+1;
 	char filename[filename_s];
 	sprintf(filename, "%swww/", Cfg_Server_DirSave);
-	char *WWW_PATH = realpath(filename, NULL);
+	char *WWW_PATH = l_realpath(filename);
 	WWW_PATH = realloc(WWW_PATH, strlen(WWW_PATH)+2);
 	WWW_PATH[strlen(WWW_PATH)+1] = 0;
 	WWW_PATH[strlen(WWW_PATH)] = '/';
@@ -200,7 +201,7 @@ void HTTP_Work(netlink_t *NetLink)
 
 	char FILE_PATH_TMP[strlen(WWW_PATH)+strlen(URL_PATH)+1];
 	sprintf(FILE_PATH_TMP, "%s%s", WWW_PATH, URL_PATH);
-	char *FILE_PATH = realpath(FILE_PATH_TMP, NULL);
+	char *FILE_PATH = l_realpath(FILE_PATH_TMP);
 
 	if (!memcmp(NetLink->Head, "POST ", 5) || !memcmp(NetLink->Head, "TRACE ", 6))
 		goto HTML_501;

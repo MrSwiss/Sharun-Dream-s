@@ -18,12 +18,11 @@ SQL_QUEUE *MySQL_Slow_l = NULL;
 SQL_QUEUE *MySQL_Fast = NULL;
 SQL_QUEUE *MySQL_Fast_l = NULL;
 
-void MySQL_Thread_API(void *argv)
+void MySQL_Thread_API(ushort *MT_id)
 {
 	MYSQL_RES *res;
 	bool Fast = true;
 	SQL_QUEUE *sql_q;
-	ushort *MT_id = argv;
 	short thread_id = *MT_id;
 	free(MT_id);
 	if (thread_id < MySQL_Slow_Thread) Fast = false;
@@ -40,9 +39,11 @@ void MySQL_Thread_API(void *argv)
 		}
 		SQL_Mutex_Unlock(Fast);
 		if (sql_q) {
+DEBUG("%s (%i) :: \"%s\"\n", __func__, __LINE__, sql_q->Query);
 			mysql_query(conn[thread_id], sql_q->Query);
 			if (mysql_error(conn[thread_id])[0])
-				DEBUG("%s (%i) :: %s\n", __func__, __LINE__, mysql_error(conn[thread_id]));
+				DEBUG("%s (%i) :: %s : \"%s\"\n", __func__, __LINE__, mysql_error(conn[thread_id]), sql_q->Query);
+DEBUG("%s (%i) :: \"%s\"\n", __func__, __LINE__, sql_q->Query);
 			if (!Fast || sql_q->result == 2)
 				res = mysql_use_result(conn[thread_id]);
 			else
@@ -141,6 +142,7 @@ char ***MySQL_Query_Fast(char *Query, char result)
 void MySQL_Query_Slow(char *Query)
 {
 	SQL_QUEUE *sql_q = SQL_NewQueue(Query);
+DEBUG("%s (%i) :: \"%s\"\n", __func__, __LINE__, sql_q->Query);
 	SQL_Mutex_Lock(false);
 	if (!MySQL_Slow) MySQL_Slow = sql_q;
 	else {

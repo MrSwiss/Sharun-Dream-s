@@ -4,7 +4,7 @@
 printf("%s (%i)\n", __func__, __LINE__);
  **/
 
-#include "Libs/TeraCrypt/TeraCrypt.h"
+#include "TeraCrypt.h"
 
 int class_mat[] = {
 	LEATHER,
@@ -205,11 +205,11 @@ void Player_Login(netlink_t *NetLink)
 					rrun = 0;
 					S_LOGIN_FAILED_f(player);
 				} else
-					player->Regen_Thread = CreateThread(NULL, 0, Regen_Player, (void*)player, 0, NULL);
+					player->Regen_Thread = CreateThread(NULL, 0, (void*)Regen_Player, player, 0, NULL);
 			}
 			long Still_Online;
 			player->Still_Online = &Still_Online;
-			while (rrun && player->Packet_R_Size) {
+			while (rrun && player->Packet_R_Size >= 0) {
 				Still_Online = time(NULL);
 				Player_Recv(player);
 				if (!Still_Online) {
@@ -229,7 +229,7 @@ void Player_Login(netlink_t *NetLink)
 						return;
 					}
 					OpCodes_Read(player);
-				} while (player->Packet_R_Size && player->Packet_R_Pos < player->Packet_R_Size);
+				} while (player->Packet_R_Size >= 0 && player->Packet_R_Pos < player->Packet_R_Size);
 			}
 		}
 	} else

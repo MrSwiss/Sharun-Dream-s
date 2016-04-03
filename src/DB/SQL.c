@@ -43,15 +43,17 @@ uint SQL_Max_Row(void *Result)
 	return mysql_num_rows(Result);
 }
 
-void SQL_Seek(void *Result, int pos)
+void SQL_Seek(void *Result, ulong pos)
 {
+#ifndef WIN32
 	mysql_data_seek(Result, pos);
+#endif // WIN32
 }
 
 void *SQL_Next_Row(void *Result)
 {
 	MYSQL_ROW row;
-	if ((row = mysql_fetch_row(Result)) != NULL)
+	if (Result && (row = mysql_fetch_row(Result)) != NULL)
 		return row;
 	return NULL;
 }
@@ -59,7 +61,7 @@ void *SQL_Next_Row(void *Result)
 void SQL_Result_Clear(void *Result)
 {
 	if (Result) {
-	  mysql_free_result(Result);
+		mysql_free_result(Result);
 	}
 }
 
