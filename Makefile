@@ -159,7 +159,7 @@ build/$(SYS)_%.o: */*/*/*/*/*/%.cpp
 	@echo $(notdir $@)
 	@${C+} ${CPPFLAGS} ${INCLUDE_DIRS} -c $< -o $@
 
-build/win32_resource.o: ${SubDir}res/resource.rc ${SubDir}res/resource.h
+build/win32_resource.o: ${SubDir}res/resource.rc ${SubDir}res/resource.hpp
 	@echo $(notdir $@)
 	@${RC} -I./${SubDir}include -I./${SubDir}res -DR_VERSION=$(R_VERSION) -DL_VERSION=\\\"$(L_VERSION)\\\" -DRX_VERSION=$(R_VERSION) -DLX_VERSION=\\\"$(L_VERSION)\\\" -i $< -o $@
 

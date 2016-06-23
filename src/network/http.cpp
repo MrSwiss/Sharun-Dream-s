@@ -2,9 +2,9 @@
 #include "Sharun.hpp"
 #include "internal/version.hpp"
 
-#include "httpd_link.h"
-#include "mime_type.h"
-#include "can_transform.h"
+#include "httpd_link.hpp"
+#include "mime_type.hpp"
+#include "can_transform.hpp"
 
 #include <cstdarg>
 #include <sys/stat.h>
