@@ -5,7 +5,7 @@
 #include <cerrno>
 #include <csignal>
 
-void HTTP_Thread(thread_list*);
+void HttpD_Thread(thread_list*);
 
 network::network()
 {
@@ -93,7 +93,7 @@ int network::start()
 	}
 	for (int i=0; count && Settings->Thread.Httpd > 1 && i < Settings->Thread.Httpd; i++) {
 		thread_list *thread = new thread_list();
-		if (!thread->start((void*)HTTP_Thread, thread))
+		if (!thread->start((void*)HttpD_Thread, thread))
 			DEBUG("%s (%i) :: Could not start Httpd thread %i !\n", __FILE__, __LINE__, i);
 		else
 			DEBUG("%s (%i) :: Httpd thread %i started.\n", __FILE__, __LINE__, i);

@@ -1,44 +1,39 @@
 #include "Sharun.hpp"
 #include "internal/Fixed_Thread.hpp"
 
-void GameD_Cleanup();
-void HTTP_Cleanup();
+#include <vector>
 
-typedef struct Fixed_thread_Close_t {
-	void (*Cleanup)();
-	Fixed_thread_Close_t* next;
-} Fixed_thread_Close_t;
-
-Fixed_thread_Close_t *Fixed_thread_Close_list = NULL;
+bool Fixed_thread_Close_init = false;
+pthread_mutex_t Fixed_thread_Close_mtx;
+std::vector<void (*)()> Fixed_thread_Close_list;
 
 void Fixed_thread_Close()
 {
-	Fixed_thread_Close_t *Cleanup_t;
-	while (Fixed_thread_Close_list) {
-		Cleanup_t = Fixed_thread_Close_list;
-		Fixed_thread_Close_list = Fixed_thread_Close_list->next;
-		Cleanup_t->Cleanup();
-		delete Cleanup_t;
+	pthread_mutex_lock(&Fixed_thread_Close_mtx);
+	while (!Fixed_thread_Close_list.empty()) {
+		Fixed_thread_Close_list.back()();
+		Fixed_thread_Close_list.pop_back();
 	}
+	pthread_mutex_unlock(&Fixed_thread_Close_mtx);
+	pthread_mutex_destroy(&Fixed_thread_Close_mtx);
+	Fixed_thread_Close_init = false;
 }
 
 void Fixed_thread_Close_Add(void (*cleanup)())
 {
-	Fixed_thread_Close_t *Cleanup_t = new Fixed_thread_Close_t;
-	Cleanup_t->next = NULL;
-	Cleanup_t->Cleanup = cleanup;
-	if (!Fixed_thread_Close_list)
-		Fixed_thread_Close_list = Cleanup_t;
-	else {
-		Fixed_thread_Close_t *Fixed_thread_Close_lt = Fixed_thread_Close_list;
-		while (Fixed_thread_Close_lt->next && Fixed_thread_Close_lt->Cleanup != cleanup)
-			Fixed_thread_Close_lt = Fixed_thread_Close_lt->next;
-		if (Fixed_thread_Close_lt->Cleanup == cleanup)
-			delete Cleanup_t;
-		else
-			Fixed_thread_Close_lt->next = Cleanup_t;
-		
+	if (!Fixed_thread_Close_init) {
+		pthread_mutex_init(&Fixed_thread_Close_mtx, NULL);
+		Fixed_thread_Close_init = true;
 	}
+	pthread_mutex_lock(&Fixed_thread_Close_mtx);
+	int i = Fixed_thread_Close_list.size(); 
+	while (i > 0) {
+		i--;
+		if (cleanup == Fixed_thread_Close_list[i])
+			return;
+	}
+	Fixed_thread_Close_list.push_back(cleanup);
+	pthread_mutex_unlock(&Fixed_thread_Close_mtx);
 }
 
 Fixed_thread_t *create_Fixed_thread_t(thread_list *my_thread)
@@ -50,62 +45,62 @@ Fixed_thread_t *create_Fixed_thread_t(thread_list *my_thread)
 	return Fixed_thread_l;
 }
 
-void Fixed_thread_Cleanup(pthread_mutex_t *mtx, Fixed_thread_t **thread, bool *mtx_init)
+void Fixed_thread_Cleanup(Fixed_thread_W_t* void_thread)
 {
-	if (*mtx_init) {
-		pthread_mutex_lock(mtx);
-		while (*thread) {
-			pthread_mutex_unlock(mtx);
-			(*thread)->thread->join();
-			pthread_mutex_lock(mtx);
+	if (void_thread->init) {
+		pthread_mutex_lock(&void_thread->mtx);
+		while (void_thread->threads[0]) {
+			pthread_mutex_unlock(&void_thread->mtx);
+			void_thread->threads[0]->thread->join();
+			pthread_mutex_lock(&void_thread->mtx);
 		}
-		pthread_mutex_unlock(mtx);
-		pthread_mutex_destroy(mtx);
+		pthread_mutex_unlock(&void_thread->mtx);
+		pthread_mutex_destroy(&void_thread->mtx);
 	}
-	*mtx_init = false;
+	void_thread->init = false;
 }
 
-void Fixed_thread_Signal(Fixed_thread_t **thread)
+void Fixed_thread_Signal(Fixed_thread_W_t* void_thread)
 {
-	for (Fixed_thread_t *thread_l = thread[0] ; thread_l ; ) {
+	for (Fixed_thread_t *thread_l = void_thread->threads[0] ; thread_l ; ) {
 		thread_l->thread->signal();
 		thread_l = thread_l->next;
 	}
 }
 
-Fixed_thread_t *Fixed_thread_Add(void (*cleanup)(), pthread_mutex_t *mtx, Fixed_thread_t** voit_thread, thread_list* my_thread, bool *mtx_init)
+Fixed_thread_t *Fixed_thread_Add(void (*cleanup)(), Fixed_thread_W_t* void_thread, thread_list* my_thread)
 {
-	if (!*mtx_init) {
-		*mtx_init = true;
-		pthread_mutex_init(mtx, NULL);
+	if (!void_thread->init) {
+		void_thread->init = true;
+		pthread_mutex_init(&void_thread->mtx, NULL);
 		Fixed_thread_Close_Add(cleanup);
 	}
 	Fixed_thread_t *Fixed_thread_l = create_Fixed_thread_t(my_thread);
-	pthread_mutex_lock(mtx);
-	if (!voit_thread[0])
-		voit_thread[0] = voit_thread[1] = Fixed_thread_l;
+	pthread_mutex_lock(&void_thread->mtx);
+	if (!void_thread->threads[0])
+		void_thread->threads[0] = void_thread->threads[1] = Fixed_thread_l;
 	else {
-		voit_thread[1]->next = Fixed_thread_l;
-		Fixed_thread_l->prev = voit_thread[1];
-		voit_thread[1] = voit_thread[1]->next;
+		void_thread->threads[1]->next = Fixed_thread_l;
+		Fixed_thread_l->prev = void_thread->threads[1];
+		void_thread->threads[1] = void_thread->threads[1]->next;
 	}
-	pthread_mutex_unlock(mtx);
+	pthread_mutex_unlock(&void_thread->mtx);
 	return Fixed_thread_l;
 }
 
-void Fixed_thread_Del(pthread_mutex_t* mtx, Fixed_thread_t** voit_thread, Fixed_thread_t* Fixed_thread_l)
+void Fixed_thread_Del(Fixed_thread_W_t* void_thread, Fixed_thread_t* Fixed_thread_l)
 {
 	thread_list* my_thread = Fixed_thread_l->thread;
-	pthread_mutex_lock(mtx);
+	pthread_mutex_lock(&void_thread->mtx);
 	if (Fixed_thread_l->prev)
 		Fixed_thread_l->prev->next = Fixed_thread_l->next;
 	else
-		voit_thread[0] = Fixed_thread_l->next;
+		void_thread->threads[0] = Fixed_thread_l->next;
 	if (Fixed_thread_l->next)
 		Fixed_thread_l->next->prev = Fixed_thread_l->prev;
 	else
-		voit_thread[1] = Fixed_thread_l->prev;
-	pthread_mutex_unlock(mtx);
+		void_thread->threads[1] = Fixed_thread_l->prev;
+	pthread_mutex_unlock(&void_thread->mtx);
 	delete Fixed_thread_l;
 	my_thread->internal_delete();
 }
