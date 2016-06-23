@@ -97,14 +97,6 @@
 
 #include "p_buffer.h"
 
-static const char wday_name[][4] = {
-    "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-};
-static const char mon_name[][4] = {
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-};
-
 typedef struct Cfg_PLAYER_t {
 	short	PassLength;
 	int	PLayer_SUBID;
