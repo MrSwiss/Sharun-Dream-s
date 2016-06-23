@@ -1,7 +1,0 @@
-
-enum STUFF {
-	METAL=0,
-	LEATHER,
-	CLOTH,
-	STUFF_MAX
-};
