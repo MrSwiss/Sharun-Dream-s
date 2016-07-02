@@ -13,6 +13,7 @@
 
 #include "data_type.hpp"
 #include "settings.hpp"
+#include "DB.hpp"
 #include "packet.hpp"
 #include "connexion.hpp"
 #include "utils.hpp"
@@ -26,8 +27,10 @@
  *********************************************************************/
 typedef struct sharun_t {
 	uint	version = 1;
-	settings*	Settings;
-	
+	settings	Settings;
+	database	DB;
 } sharun_t;
+
+extern sharun_t *Sharun;
 
 #endif // _SHARUN_HPP_

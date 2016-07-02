@@ -4,7 +4,7 @@ packet::packet()
 {
 	id = 0;
 	size = 4;
-	if (Settings->Packets_Fill_Size)
+	if (Sharun->Settings.Packets_Fill_Size)
 		size_max = PACKET_MAX_SIZE;
 	else
 		size_max = 4;
@@ -98,16 +98,16 @@ ushort packet::full_size()
 
 void packet::get_header()
 {
-	memcpy(&id, &raw[0], 2);
-	memcpy(&size, &raw[2], 2);
+	memcpy(&size, &raw[0], 2);
+	memcpy(&id, &raw[2], 2);
 	size_max = size;
-	resize(4);
+	resize(size);
 }
 
 void packet::set_header()
 {
-	memcpy(&raw[0], &id, 2);
-	memcpy(&raw[2], &size, 2);
+	memcpy(&raw[0], &size, 2);
+	memcpy(&raw[2], &id, 2);
 }
 
 void packet::set_header(ushort id_n)
@@ -139,10 +139,18 @@ ushort packet::write(void* src, ushort len)
 
 ushort packet::write(char* src)
 {
-	int len = 0;
-	void *src_t = to_WCHARi(src, &len);
+	size_t len = 0;
+	void *src_t = str_str(src, &len);
 	len = write(src_t, len);
 	free(src_t);
+	pos += len;
+	return len;
+}
+
+ushort packet::write(char16_t* src)
+{
+	size_t len = strlen16(src);
+	len = write(src, len+1);
 	pos += len;
 	return len;
 }
@@ -166,17 +174,26 @@ byte* packet::read(ushort len)
 ushort packet::read(char* dst)
 {
 	ushort len = 0;
-	len = to_CHARi((uint16_t*)&raw[pos], dst);
+	len = strcpy16(dst, (char16_t*)&raw[pos]);
 	pos += len;
 	return len;
 }
 
-char* packet::read_S()
+char* packet::read_Str()
 {
 	ushort len = 0;
-	len = WCHARlen((uint16_t*)&raw[pos]);
+	len = str_strlen((char16_t*)&raw[pos]);
 	char *dst_t = new char[len + 1];
-	len = to_CHARi((uint16_t*)&raw[pos], dst_t);
+	len = strcpy16(dst_t, (char16_t*)&raw[pos]);
+	pos += len;
+	return dst_t;
+}
+
+char16_t* packet::read_S()
+{
+	ushort len = strlen16((char16_t*)&raw[pos]);
+	char16_t *dst_t = new char16_t[len + 1];
+	len = strcpy16(dst_t, (char16_t*)&raw[pos]);
 	pos += len;
 	return dst_t;
 }

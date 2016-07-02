@@ -16,11 +16,11 @@ class settings {
 		bool	AutoAccount;
 		bool	newHP;
 		bool	Stamina4Speed;
+		bool	main_run;
 		struct Dirs {
 			std::string Saves;
 			std::string Logs;
 			std::string OpCodes;
-			std::string DB;
 			std::string WWW;
 			std::string Guild_Logo;
 			struct Settings {
@@ -37,13 +37,6 @@ class settings {
 				ushort Slow;
 			} DataBase;
 		} Thread;
-		struct DataBase {
-			char	IP[8*4+7+1];
-			ushort	Port;
-			char*	Login;
-			char*	Pass;
-			char*	Name;
-		} DataBase;
 		struct Net {
 			bool	localhost;
 			struct Ports {
@@ -53,7 +46,5 @@ class settings {
 			} Ports;
 		} Net;
 };
-
-extern settings* Settings;
 
 #endif // _SETTINGS_HPP_

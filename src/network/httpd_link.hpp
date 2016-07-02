@@ -10,4 +10,4 @@ typedef struct httpd_link_t
 
 
 void HTTP_Work(httpd_link_t*);
-void HTTP_Add(httpd_link_t*);
+void HttpD_Add(httpd_link_t*);

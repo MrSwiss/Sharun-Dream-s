@@ -2,6 +2,7 @@
 #define _DATA_TYPE_HPP_
 
 #include <cstdint>
+#include <char16_t.hpp>
 
 #define ulong	uint64_t
 #define uint	uint32_t

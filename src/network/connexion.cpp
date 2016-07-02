@@ -8,6 +8,9 @@
 #include <cerrno>
 #include <unistd.h>
 
+#include <uchar.h>
+#define _O_U16TEXT 0x20000
+
 void CloseSocket(SOCKET *sock)
 {
 	if (*sock >= 0) {
@@ -100,7 +103,7 @@ connexion_list::~connexion_list()
 	pthread_mutex_destroy(&teraCrypt_Mtx);
 }
 
-void connexion_list::Key(byte *keys, bool i_m_client)
+void connexion_list::Key(const char *keys, bool i_m_client)
 {
 	teraCrypt_Client = i_m_client;
 	if (!teraCrypt_Client)
@@ -129,6 +132,14 @@ void connexion_list::Decode(packet *packet_l, bool head)
 		Sess->Decrypt(packet_l->raw + (head ? 0 : 4), (head ? 4: packet_l->size - 4));
 	else
 		Sess->Encrypt(packet_l->raw + (head ? 0 : 4), (head ? 4: packet_l->size - 4));
+}
+
+void connexion_list::Set_timeout(ushort sec)
+{
+	struct timeval tv;
+	tv.tv_usec = 0;
+	tv.tv_sec = sec;
+	setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv,sizeof(struct timeval));
 }
 
 int connexion_list::Send(packet *packet_l)
@@ -162,7 +173,7 @@ int connexion_list::Recv(packet *packet_l)
 	pthread_mutex_lock(&teraCrypt_Mtx);
 	int len = Recv((char*)packet_l->raw, 4);
 	Decode(packet_l, true);
-	packet_l->resize(packet_l->size);
+	packet_l->get_header();
 	do
 		len += Recv((char*)&packet_l->raw[len], packet_l->size - len);
 	while (packet_l->size > len);
@@ -206,16 +217,16 @@ void HttpD(connexion_list *connex)
 		} else {
 			httpd_link_t *httpd_link = new httpd_link_t;
 			httpd_link->noHead = false;
-			httpd_link->connex = new connexion_list(csock, PORT_TYPE_HTTPD);
+			httpd_link->connex = new connexion_list(csock, PORT_TYPE_OUT);
 			httpd_link->Size = httpd_link->connex->Recv(httpd_link->Head, httpd_link_Head_Size);
-			if (Settings->Thread.Httpd > 1)
-				HTTP_Add(httpd_link);
+			if (Sharun->Settings.Thread.Httpd > 1)
+				HttpD_Add(httpd_link);
 			else
 				HTTP_Work(httpd_link);
 		}
 	}
 	thread->internal_delete();
-	DEBUG("%s (%i) :: Network Stopped (%s).\n", __FILE__, __LINE__, Settings->Net.localhost ? "localhost" : "ANY");
+	DEBUG("%s (%i) :: Network Stopped (%s).\n", __FILE__, __LINE__, Sharun->Settings.Net.localhost ? "localhost" : "ANY");
 	pthread_exit(NULL);
 }
 
@@ -234,18 +245,74 @@ void GameD(connexion_list *connex)
 				DEBUG("%s (%i) :: Client (GameD) connexion Error (%d %d)\n", __func__, __LINE__, errno, csock);
 #endif
 		} else {
-			
-			httpd_link_t *httpd_link = new httpd_link_t;
-			httpd_link->noHead = false;
-			httpd_link->connex = new connexion_list(csock, PORT_TYPE_HTTPD);
-			httpd_link->Size = httpd_link->connex->Recv(httpd_link->Head, httpd_link_Head_Size);
-			if (Settings->Thread.Httpd > 1)
-				HTTP_Add(httpd_link);
-			else
-				HTTP_Work(httpd_link);
+			httpd_link_t *httpd_link = NULL;
+			connexion_list *connex_t = new connexion_list(csock, PORT_TYPE_OUT);
+DEBUG("%s (%i) :: Someone connected\n", __func__, __LINE__);
+			if (Sharun->Settings.Net.Ports.Game == Sharun->Settings.Net.Ports.Httpd) {
+
+DEBUG("%s (%i) :: Detect a browser...\n", __func__, __LINE__);
+				httpd_link = new httpd_link_t;
+				httpd_link->noHead = false;
+				httpd_link->connex = connex_t;
+				connex_t->Set_timeout(2);
+				httpd_link->Size = httpd_link->connex->Recv(httpd_link->Head, httpd_link_Head_Size);
+				connex_t->Set_timeout(0);
+				if (httpd_link->Size > 0) {
+					if (Sharun->Settings.Thread.Httpd > 1)
+						HttpD_Add(httpd_link);
+					else
+						HTTP_Work(httpd_link);
+					continue;
+				}
+			}
+			if (httpd_link)
+				delete httpd_link;
+			connex_t->Send((const char[4]){0x01, 0x00, 0x00, 0x00}, 4);
+			char *Key_l = new char[4*128];
+			for (int i=0; i<2; i++)
+				for (int j=0; j<128; j++)
+					Key_l[(2+i)*128+j] = rand() % 0xff;
+			bool rrun = true;
+			for (int i=0; i<2 && rrun; i++) {
+				int ret = connex_t->Recv(&Key_l[(0+i)*128], 128);
+	hexdump(__func__, "Client Key", &Key_l[(0+i)*128], 128);
+				if (ret != 128) {
+					DEBUG("%s (%i) :: Client Key %i ! (%i<128)\n", __func__, __LINE__, i+1, ret);
+					rrun = false;
+					delete connex_t;
+					delete Key_l;
+					continue;
+				}
+				if (rrun) {
+					ret = connex_t->Send(&Key_l[(2+i)*128], 128);
+	hexdump(__func__, "Server Key", &Key_l[(2+i)*128], 128);
+				}
+			if (rrun  && ret != 128) {
+					DEBUG("%s (%i) :: Server Key %i ! (%i<128)\n", __func__, __LINE__, i+1, ret);
+					rrun = false;
+					delete connex_t;
+					delete Key_l;
+					continue;
+				}
+			}
+			connex_t->Key(Key_l, false);
+			delete Key_l;
+			packet *packet_l = new packet();
+			connex_t->Recv(packet_l);
+	hexdump(__func__, "Packet", packet_l->raw, packet_l->size);
+			delete packet_l;
+			packet_l = new packet();
+			connex_t->Recv(packet_l);
+	hexdump(__func__, "Packet", packet_l->raw, packet_l->size);
+	hexdump(__func__, "Packet + 23", packet_l->raw + 23, packet_l->size - 23);
+			char16_t *Name = (char16_t*)&packet_l->raw[23];
+char *tmp = str_str(Name);
+printf("alpha is:\n\t%s\n", tmp);
+printf("strcmp16 is:\n\t%i\n", strcmp16(Name, u"clofriwen"));
+free(tmp);
 		}
 	}
 	thread->internal_delete();
-	DEBUG("%s (%i) :: Network Stopped (%s).\n", __FILE__, __LINE__, Settings->Net.localhost ? "localhost" : "ANY");
+	DEBUG("%s (%i) :: Network Stopped (%s).\n", __FILE__, __LINE__, Sharun->Settings.Net.localhost ? "localhost" : "ANY");
 	pthread_exit(NULL);
 }

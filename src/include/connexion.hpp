@@ -9,9 +9,7 @@ enum port_type {
 	PORT_TYPE_IN_GAME = 0,
 	PORT_TYPE_IN_HTTPD,
 	PORT_TYPE_IN_BRIDGE,
-	PORT_TYPE_GAME,
-	PORT_TYPE_HTTPD,
-	PORT_TYPE_BRIDGE,
+	PORT_TYPE_OUT,
 };
 
 class connexion_list {
@@ -30,7 +28,8 @@ class connexion_list {
 		void*	mother;
 		connexion_list* next;
 		connexion_list* prev;
-		void	Key(byte*, bool);
+		void	Key(const char*, bool);
+		void Set_timeout(ushort);
 		virtual int Send(packet*);	// Auto-delete packet !
 		virtual int Send(const char*, int);
 		virtual int Send(const char*);

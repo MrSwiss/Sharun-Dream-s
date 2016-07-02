@@ -29,8 +29,10 @@ void Fixed_thread_Close_Add(void (*cleanup)())
 	int i = Fixed_thread_Close_list.size(); 
 	while (i > 0) {
 		i--;
-		if (cleanup == Fixed_thread_Close_list[i])
+		if (cleanup == Fixed_thread_Close_list[i]) {
+			pthread_mutex_unlock(&Fixed_thread_Close_mtx);
 			return;
+		}
 	}
 	Fixed_thread_Close_list.push_back(cleanup);
 	pthread_mutex_unlock(&Fixed_thread_Close_mtx);
@@ -75,17 +77,20 @@ Fixed_thread_t *Fixed_thread_Add(void (*cleanup)(), Fixed_thread_W_t* void_threa
 		pthread_mutex_init(&void_thread->mtx, NULL);
 		Fixed_thread_Close_Add(cleanup);
 	}
-	Fixed_thread_t *Fixed_thread_l = create_Fixed_thread_t(my_thread);
-	pthread_mutex_lock(&void_thread->mtx);
-	if (!void_thread->threads[0])
-		void_thread->threads[0] = void_thread->threads[1] = Fixed_thread_l;
-	else {
-		void_thread->threads[1]->next = Fixed_thread_l;
-		Fixed_thread_l->prev = void_thread->threads[1];
-		void_thread->threads[1] = void_thread->threads[1]->next;
+	if (my_thread) {
+		Fixed_thread_t *Fixed_thread_l = create_Fixed_thread_t(my_thread);
+		pthread_mutex_lock(&void_thread->mtx);
+		if (!void_thread->threads[0])
+			void_thread->threads[0] = void_thread->threads[1] = Fixed_thread_l;
+		else {
+			void_thread->threads[1]->next = Fixed_thread_l;
+			Fixed_thread_l->prev = void_thread->threads[1];
+			void_thread->threads[1] = void_thread->threads[1]->next;
+		}
+		pthread_mutex_unlock(&void_thread->mtx);
+		return Fixed_thread_l;
 	}
-	pthread_mutex_unlock(&void_thread->mtx);
-	return Fixed_thread_l;
+	return NULL;
 }
 
 void Fixed_thread_Del(Fixed_thread_W_t* void_thread, Fixed_thread_t* Fixed_thread_l)
@@ -102,5 +107,6 @@ void Fixed_thread_Del(Fixed_thread_W_t* void_thread, Fixed_thread_t* Fixed_threa
 		void_thread->threads[1] = Fixed_thread_l->prev;
 	pthread_mutex_unlock(&void_thread->mtx);
 	delete Fixed_thread_l;
-	my_thread->internal_delete();
+	if (my_thread)
+		my_thread->internal_delete();
 }

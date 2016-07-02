@@ -27,6 +27,7 @@ thread_list::thread_list()
 		pthread_mutex_init(&thread_L_mtx, NULL);
 	}
 	run = true;
+	sub_param = 0;
 	next = NULL;
 	prev = NULL;
 	mother = NULL;

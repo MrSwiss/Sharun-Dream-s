@@ -101,18 +101,18 @@ void HTTP_Transform_Change(char **tmp, bool html_file)
 	char p;
 	do {
 		p = 0;
-		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_NAME%", Settings->Server_Name, 0);
-		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_START_TIME%", Settings->Start_Time, 0);
-		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_START_COUNT%", NULL, Settings->Start_Count);
+		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_NAME%", Sharun->Settings.Server_Name, 0);
+		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_START_TIME%", Sharun->Settings.Start_Time, 0);
+		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_START_COUNT%", NULL, Sharun->Settings.Start_Count);
 		if (!p) p = HTTP_Transform_Adjust(tmp, "%SYSTEM_NAME%", (char*)SYSTEM_NAME, 0);
 		if (!p) p = HTTP_Transform_Adjust(tmp, "%SYSTEM_VERSION%", (char*)SYSTEM_VERSION, 0);
 		if (!p && html_file) p = HTTP_Transform_Adjust(tmp, "</body>", (char*)"\t%SERVER_SIGN%\n\t\t<sup>%SYSTEM_NAME% (%SYSTEM_VERSION%), a Tera server. Http server side.</sup>\n\t</BODY>", 0);
 		if (!p && html_file) p = HTTP_Transform_Adjust(tmp, "<body>", (char*)"<BODY>", 0);
 		if (!p && html_file) p = HTTP_Transform_Adjust(tmp, "</head>", (char*)"\t<!-- Created by Clofriwen, inspired from Tera Shock. http://forum.ragezone.com/f796/dev-sharun-dreams-1085405/ -->\n\t\t%SERVER_COPYRIGHT%\n\t</HEAD>", 0);
 		if (!p && html_file) p = HTTP_Transform_Adjust(tmp, "<head>", (char*)"<HEAD>", 0);
-		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_COPYRIGHT%", Settings->SERVER_COPYRIGHT, 0);
-		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_SIGN%", Settings->SERVER_SIGN, 0);
-		if (!p) p = HTTP_Transform_Adjust(tmp, "%PLAYERS_COUNT%", NULL, Settings->PLAYER_COUNT);
+		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_COPYRIGHT%", Sharun->Settings.SERVER_COPYRIGHT, 0);
+		if (!p) p = HTTP_Transform_Adjust(tmp, "%SERVER_SIGN%", Sharun->Settings.SERVER_SIGN, 0);
+		if (!p) p = HTTP_Transform_Adjust(tmp, "%PLAYERS_COUNT%", NULL, Sharun->Settings.PLAYER_COUNT);
 		if (!p) p = HTTP_Transform_Adjust(tmp, "%PLAYERS_LIST%", NULL, 0);
 	} while (p);
 }
@@ -180,7 +180,7 @@ void HTTP_Work(httpd_link_t *httpd_link)
 	bool http_head = false;
 	long f_size = 0;
 	FILE *fp = NULL;
-	char *WWW_PATH = l_realpath(Settings->Dirs.WWW.c_str());
+	char *WWW_PATH = l_realpath(Sharun->Settings.Dirs.WWW.c_str());
 	WWW_PATH = (char*)realloc(WWW_PATH, strlen(WWW_PATH)+2);
 	WWW_PATH[strlen(WWW_PATH)+1] = 0;
 	WWW_PATH[strlen(WWW_PATH)] = '/';

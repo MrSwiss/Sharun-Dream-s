@@ -17,17 +17,6 @@ char*	strdump(const char *value);
 char*	strndump(const char *value, int len);
 void	strupdate(char **src, const char *value);
 
-int	utf8_to_unicode_length(const unsigned char *c);
-Wchar	utf8_to_unicode(const unsigned char *c, int *pos);
-int	unicode_to_utf8_length(const Wchar *c);
-int	unicode_to_utf8(char* b, Wchar c);
-
-int	WCHARlen(const Wchar *wc);
-int	cpy_WCHAR(Wchar *wc, const char *c, int len);
-int	cpy_WCHAR2(Wchar *wc, const char *c);
-Wchar*	to_WCHARi(const char *c, int *size);
-Wchar*	to_WCHAR(const char *c);
-
 char*	to_CHAR(const Wchar *wc);
 int	to_CHARi(const Wchar *wc, char *c);
 

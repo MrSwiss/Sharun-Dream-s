@@ -44,22 +44,22 @@ int network::start()
 		ushort port = 0;
 		switch (i) {
 			case 2 :
-				port = Settings->Net.Ports.Bridge;
+				port = Sharun->Settings.Net.Ports.Bridge;
 				break;
 			case 1 :
-				port = Settings->Net.Ports.Httpd;
-				if (port == Settings->Net.Ports.Game)
+				port = Sharun->Settings.Net.Ports.Httpd;
+				if (port == Sharun->Settings.Net.Ports.Game)
 					port = 0;
 				break;
 			default :
-				port = Settings->Net.Ports.Game;
+				port = Sharun->Settings.Net.Ports.Game;
 		}
 		if (!port) {
 			CloseSocket(&sock);
 			continue;
 		}
 		sa.sin_port = htons(port);
-		if (Settings->Net.localhost)
+		if (Sharun->Settings.Net.localhost)
 			sa.sin_addr.s_addr = inet_addr("127.0.0.1");
 		else
 			sa.sin_addr.s_addr = INADDR_ANY;
@@ -89,9 +89,9 @@ int network::start()
 
 		count++;
 		new connexion_list(sock, (port_type)i);
-		DEBUG("%s (%i) :: Network Started (%s : %i).\n", __FILE__, __LINE__, Settings->Net.localhost ? "localhost" : "ANY", port);
+		DEBUG("%s (%i) :: Network Started (%s : %i).\n", __FILE__, __LINE__, Sharun->Settings.Net.localhost ? "localhost" : "ANY", port);
 	}
-	for (int i=0; count && Settings->Thread.Httpd > 1 && i < Settings->Thread.Httpd; i++) {
+	for (int i=0; count && Sharun->Settings.Thread.Httpd > 1 && i < Sharun->Settings.Thread.Httpd; i++) {
 		thread_list *thread = new thread_list();
 		if (!thread->start((void*)HttpD_Thread, thread))
 			DEBUG("%s (%i) :: Could not start Httpd thread %i !\n", __FILE__, __LINE__, i);

@@ -64,7 +64,7 @@ namespace Crypt
 	  byte ClientKey2[128];
 	  byte ServerKey1[128];
 	  byte ServerKey2[128];
-	  Session(byte *CKey1, byte *CKey2, byte *SKey1, byte *SKey2);
+	  Session(const char *CKey1, const char *CKey2, const char *SKey1, const char *SKey2);
 	  ~Session();
 	  void Encrypt(byte *data, int length);
 	  void Decrypt(byte *data, int length);

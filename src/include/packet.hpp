@@ -14,7 +14,7 @@ class packet
 
 	public:
 		packet();
-		~packet();
+		virtual ~packet();
 		ushort	id;	// OpCode ID
 		ushort	size;
 		ushort	pos;
@@ -34,6 +34,7 @@ class packet
 
 		virtual ushort	write(void*, ushort);
 		virtual ushort	write(char*);
+		virtual ushort	write(char16_t*);
 		virtual ushort	write(uchar);
 		virtual ushort	write(ushort);
 		virtual ushort	write(short);
@@ -46,7 +47,8 @@ class packet
 		virtual ushort	read(void*, ushort);
 		virtual byte*	read(ushort);
 		virtual ushort	read(char*);
-		char*	read_S();
+		char*	read_Str();
+		char16_t*	read_S();
 		uchar	read_1();
 		ushort	read_2();
 		uint	read_4();

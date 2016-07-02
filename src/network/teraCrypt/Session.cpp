@@ -2,7 +2,7 @@
 
 using namespace Crypt;
 
-Session::Session(byte *CKey1, byte *CKey2, byte *SKey1, byte *SKey2)
+Session::Session(const char *CKey1, const char *CKey2, const char *SKey1, const char *SKey2)
 {
 	byte TmpKey1[128], TmpKey2[128];
 	Encryptor = new Cryptor();

@@ -36,7 +36,7 @@ ifeq ($(OS), Windows_NT)
 #	-mwindows -Wl,--subsystem,windows
 	ifeq ($(MSYSTEM), MXE)
 		CFLAGS += -DMXE `mysql_config --cflags`
-		LDFLAGS += -lpthread `mysql_config --libs`
+		LDFLAGS += `mysql_config --libs` -lpthread
 	else
 		CFLAGS += -DPTW32_STATIC_LIB -DNDEBUG
 		LDFLAGS += -L/usr/lib -lpthreadGC2 -lmysql

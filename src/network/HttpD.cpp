@@ -8,7 +8,7 @@
 std::queue<httpd_link_t*> httpd_queue;
 Fixed_thread_W_t	HttpD_thread;
 
-void HTTP_Add(httpd_link_t *httpd_link)
+void HttpD_Add(httpd_link_t *httpd_link)
 {
 	pthread_mutex_lock(&HttpD_thread.mtx);
 	httpd_queue.push(httpd_link);

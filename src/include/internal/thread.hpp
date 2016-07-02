@@ -13,6 +13,7 @@ class thread_list {
 		thread_list();
 		virtual ~thread_list();
 		bool	run;
+		short	sub_param;
 		void*	mother;
 		thread_list* next;
 		thread_list* prev;
