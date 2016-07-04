@@ -7,7 +7,7 @@
 #include "data_type.hpp"
 
 #ifdef DLL_VERSION
-#include "utils_plugin.h"
+#include "utils_plugin.hpp"
 #else
 extern "C" {
 
@@ -39,6 +39,7 @@ void	hexdump(const char* function, const char* title, const void *Vbuffer, unsig
 
 void	DEBUG(const char*, ...);
 void	DEBUG2(const char*, ...);
+
 }
 #endif // DLL_VERSION
 

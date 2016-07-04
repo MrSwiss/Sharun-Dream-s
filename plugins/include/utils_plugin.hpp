@@ -1,32 +1,6 @@
 #ifndef _UTILS_PLUGIN_H_
 #define _UTILS_PLUGIN_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-
-#ifdef WIN32
-	#include <winsock2.h>
-	#include <windows.h>
-#endif
-
-#define ulong	uint64_t
-#define uint	uint32_t
-#define ushort	uint16_t
-#define uchar	uint8_t
-#define byte	uint8_t
-#define Wchar	uint16_t
-
-#ifdef WIN32
-	#define socklen_t int
-#else
-	#define SOCKET int
-	#define SOCKET_ERROR -1
-	#define INVALID_SOCKET -1
-	#define SOCKADDR const struct sockaddr
-#endif
-
 extern uint (*l_sizeof)(char *src);
 extern char* (*l_malloc)(uint size);
 extern void (*l_free)(char *src);

@@ -2,13 +2,12 @@ L_VERSION = 2.0.0
 
 HEADERS_P = 
 DIRS_P = $(wildcard ${SubDirX}src/*)
-SRC_P = utils_plugin.c sharun_plugin.cpp
+SRC_P = 
 OBJS_P = 
 OBJS_L_P = 
-OBJS_W_P = 
+OBJS_W_P = CallBack_Plugin_2.o resource_plugin.o
 INCLUDE_DIRS_P = -I. -I./${SubDirX} -I./${SubDirX}include -I./${SubDirX}src -I./${SubDirX}src/include -I./${SubDirX}res
 EXT = 
-RCF = 
 
 CC = gcc
 C+ = g++
@@ -42,7 +41,6 @@ ifeq ($(OS), Windows_NT)
 	SYS := win32
 	EXT := .exe
 	DLL := .dll
-	RCF := build/win32_resource_plugin.o
 	BIN_PATH = /bin/
 else
 	CFLAGS_P += -fPIC
@@ -58,9 +56,11 @@ CFLAGS_P += -std=gnu99
 PLG_P = $(foreach dir,$(DIRS_P),$(addsuffix $(DLL), $(dir)))
 PLG_P := $(PLG_P:common$(DLL)=)
 
-OBJS_P += $(addprefix build/$(SYS)_, $(SRC_P))
+OBJS_P += $(SRC_P)
+OBJS_P := $(addprefix build/$(SYS)_, $(OBJS_P))
 OBJS_P := $(OBJS_P:.c=.o)
 OBJS_P := $(OBJS_P:.cpp=.o)
+OBJS_P := $(OBJS_P:.rc=.o)
 
 WORK2 := $(addsuffix $(EXT), ${WORK})
 Virg = ,
@@ -76,15 +76,15 @@ build:
 
 plugins: build ${PLG_P}
 
-%$(DLL): ${RCF} ${OBJS_P}
+%$(DLL): ${OBJS_P}
 	@echo "	"$(notdir $@)
 	@${C+} ${CPPFLAGS_P} ${LDFLAGS_P} ${INCLUDE_DIRS_P} $(wildcard $(addsuffix /*.c, $(basename $@))) $(wildcard $(addsuffix /*.cpp, $(basename $@))) ${RCF} ${OBJS_P} -shared -Wl,-soname,$@ -o $(addprefix $(OUT_PLUGIN_PATH),$(notdir $@))
 
-build/$(SYS)_utils_plugin.o: ${SubDirX}src/common/utils_plugin.c
+build/$(SYS)_CallBack_Plugin_1.o: ${SubDirX}src/common/CallBack_Plugin.c
 	@echo "	"$(notdir $@)
 	@${CC} ${CFLAGS_P} ${INCLUDE_DIRS} -c $< -o $@
 
-build/$(SYS)_sharun_plugin.o: ${SubDirX}src/common/sharun_plugin.cpp
+build/$(SYS)_CallBack_Plugin_2.o: ${SubDirX}src/common/CallBack_Plugin.cpp
 	@echo "	"$(notdir $@)
 	@${C+} ${CPPFLAGS_P} ${INCLUDE_DIRS} -c $< -o $@
 

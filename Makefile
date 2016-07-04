@@ -9,7 +9,7 @@ HEADERS =
 DIRS = ${SubDir}src ${SubDir}src/DB ${SubDir}src/DB/2_Ram ${SubDir}src/OpCodes ${SubDir}src/Calc ${SubDir}src/network ${SubDir}src/network/teraCrypt ${SubDir}src/network/Broadcast
 OBJS = 
 OBJS_L = 
-OBJS_W = build/win32_resource.o
+OBJS_W = resource.o
 INCLUDE_DIRS = -I. -I./${SubDir} -I./${SubDir}include -I./${SubDir}src -I./${SubDir}src/include -I./${SubDir}plugins/include -I./${SubDir}res
 EXT = 
 
@@ -61,9 +61,11 @@ SRC = $(foreach dir,$(DIRS),$(wildcard $(dir)/*.c))
 SRC += $(foreach dir,$(DIRS),$(wildcard $(dir)/*.cpp))
 SRC := $(notdir $(SRC))
 
-OBJS += $(addprefix build/$(SYS)_, $(SRC))
+OBJS += $(SRC)
+OBJS := $(addprefix build/$(SYS)_, $(OBJS))
 OBJS := $(OBJS:.c=.o)
 OBJS := $(OBJS:.cpp=.o)
+OBJS := $(OBJS:.rc=.o)
 
 WORK2 := $(addsuffix $(EXT), ${WORK})
 Virg = ,

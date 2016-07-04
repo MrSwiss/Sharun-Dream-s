@@ -7,8 +7,26 @@
 #define PluginEXT ".so"
 #else
 #define PluginEXT ".dll"
-void *utils_init_Link[] = {
+void *CallBack_Plugin_Link[] = {
+	// sharun_t WIN32 Adaptator
 	NULL,
+	// CHAR16_T WIN32 Adaptator
+	(void*)strlen16,
+	(void*)strcnmp16,
+	(void*)strcmp16,
+	(void*)strstr16,
+	(void*)strrstr16,
+	(void*)strncpy16,
+	(void*)strcpy16,
+	(void*)strncpy8_16,
+	(void*)strcpy8_16,
+	(void*)strncpy16_8,
+	(void*)strcpy16_8,
+	(void*)str_strlen,
+	(void*)str_str16_8,
+	(void*)str_n_str8_16,
+	(void*)str_str8_16,
+	// UTILS WIN32 Adaptator
 	(void*)l_sizeof,
 	(void*)l_malloc,
 	(void*)l_free,
@@ -30,6 +48,7 @@ void *utils_init_Link[] = {
 	(void*)hexdump,
 	(void*)DEBUG,
 	(void*)DEBUG2,
+	// SECURITY STOP
 	NULL
 };
 #endif
@@ -49,9 +68,9 @@ void Plugin_Scan(std::string Path)
 						void *handle = dlopen(filename.c_str(), RTLD_LAZY);
 						if (handle) {
 #ifdef WIN32
-							void (*utils_init_l)(void**) = (void(*)(void**))dlsym(handle, "utils_init");
-							if (utils_init_l)
-								(utils_init_l)(utils_init_Link);
+							void (*CallBack_Plugin)(void**) = (void(*)(void**))dlsym(handle, "CallBack_Plugin");
+							if (CallBack_Plugin)
+								(CallBack_Plugin)(CallBack_Plugin_Link);
 #endif
 							plugin_t* Plugin_l = (plugin_t*)dlsym(handle, "Plugin");
 							Plugin_l->handle = handle;
@@ -73,7 +92,7 @@ void Plugin_Scan(std::string Path)
 void Plugin_Init()
 {
 #ifdef WIN32
-	utils_init_Link[0] = (void*)Sharun;
+	CallBack_Plugin_Link[0] = (void*)Sharun;
 #endif
 	Plugin_Scan(Sharun->Settings.Dirs.Plugins);
 }
