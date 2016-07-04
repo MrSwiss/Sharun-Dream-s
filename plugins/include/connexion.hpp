@@ -29,7 +29,7 @@ class connexion_list {
 		connexion_list* next;
 		connexion_list* prev;
 		void	Key(const char*, bool);
-		void Set_timeout(ushort);
+		void	Set_timeout(ushort);
 		virtual int Send(packet*);	// Auto-delete packet !
 		virtual int Send(const char*, int);
 		virtual int Send(const char*);

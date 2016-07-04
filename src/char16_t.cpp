@@ -185,7 +185,7 @@ int unicode_to_utf8(char* b, char16_t c)
     return i;
 }
 
-size_t strncpy16(char16_t *wc, const char *c, size_t len)
+size_t strncpy8_16(char16_t *wc, const char *c, size_t len)
 {
   char16_t b;
   size_t size = 0;
@@ -199,12 +199,12 @@ size_t strncpy16(char16_t *wc, const char *c, size_t len)
   return size;
 }
 
-size_t strcpy16(char16_t *wc, const char *c)
+size_t strcpy8_16(char16_t *wc, const char *c)
 {
-  return strncpy16(wc, c, strlen(c)+1);
+  return strncpy8_16(wc, c, strlen(c)+1);
 }
 
-size_t strncpy16(char *c, const char16_t *wc, size_t len)
+size_t strncpy16_8(char *c, const char16_t *wc, size_t len)
 {
   size_t size = 0;
   c[size] = 0;
@@ -215,9 +215,9 @@ size_t strncpy16(char *c, const char16_t *wc, size_t len)
   return size;
 }
 
-size_t strcpy16(char *c, const char16_t *wc)
+size_t strcpy16_8(char *c, const char16_t *wc)
 {
-  return strncpy16(c, wc, strlen16(wc)+1);
+  return strncpy16_8(c, wc, strlen16(wc)+1);
 }
 
 size_t strncpy16(char16_t *dst, const char16_t *src, size_t len)
@@ -240,7 +240,7 @@ size_t str_strlen(const char16_t *wc)
   return unicode_to_utf8_length(wc);
 }
 
-char *str_str(const char16_t *wc)
+char *str_str16_8(const char16_t *wc)
 {
   char *c = (char*)malloc(unicode_to_utf8_length(wc)+1);
   int size = 0;
@@ -252,7 +252,7 @@ char *str_str(const char16_t *wc)
   return c;
 }
 
-char16_t *str_str(const char *c, size_t *size)
+char16_t *str_n_str8_16(const char *c, size_t *size)
 {
   char16_t b;
   char16_t *wc = (char16_t*)malloc(sizeof(char16_t)*(utf8_to_unicode_length((const unsigned char *)c)+1));
@@ -266,8 +266,8 @@ char16_t *str_str(const char *c, size_t *size)
   return wc;
 }
 
-char16_t *str_str(const char *c)
+char16_t *str_str8_16(const char *c)
 {
   size_t size_l = 0;
-  return str_str(c, &size_l);
+  return str_n_str8_16(c, &size_l);
 }

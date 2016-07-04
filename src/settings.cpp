@@ -9,15 +9,15 @@ database_setting DB_Set;
 
 settings::~settings()
 {
-	free(Server_Name);
-	free(SERVER_SIGN);
-	free(SERVER_COPYRIGHT);
+	delete Server_Name;
+	delete SERVER_SIGN;
+	delete SERVER_COPYRIGHT;
 	if (DB_Set.Login)
-		free(DB_Set.Login);
+		delete DB_Set.Login;
 	if (DB_Set.Pass)
-		free(DB_Set.Pass);
+		delete DB_Set.Pass;
 	if (DB_Set.Name)
-		free(DB_Set.Name);
+		delete DB_Set.Name;
 }
 
 settings::settings()
@@ -54,6 +54,7 @@ settings::settings()
 
 // Directory defaults path
 	Dirs.Saves	= "Sharun_Saves";
+	Dirs.Plugins	= Dirs.Saves + "/Plugins";
 
 // Load From File...
 	FILE *fp = fopen("config.ini", "r");
@@ -87,20 +88,21 @@ settings::settings()
 		if (!strcmp(lib, "Net.Ports.Httpd"))	Net.Ports.Bridge	= atoi(val);
 		if (!strcmp(lib, "Net.Ports.Bridge"))	Net.Ports.Bridge	= atoi(val);
 		if (!strcmp(lib, "Dirs.Saves"))		Dirs.Saves = val;
+		if (!strcmp(lib, "Dirs.Plugins"))	Dirs.Plugins = val;
 		
 	}
 	fclose(fp);
 
 // Set other directories...
 	Dirs.Logs	= Dirs.Saves + "/Logs";
-	Dirs.OpCodes	= Dirs.Saves + "/OpCodes";
 	Dirs.WWW	= Dirs.Saves + "/www";
+	Dirs.OpCodes	= Dirs.Saves + "/OpCodes";
 	Dirs.Guild_Logo	= Dirs.Saves + "/Guild_Logo";
 	Dirs.Settings.Account	= Dirs.Saves + "/Settings/Account";
 	Dirs.Settings.Chat	= Dirs.Saves + "/Settings/Chat";
 	Dirs.Settings.User	= Dirs.Saves + "/Settings/User";
 
-	DB_Set.SQLite 	= Dirs.Saves + "/SQLite3.db";
+	DB_Set.SQLite 	= Dirs.Saves + "/Tera.db3";
 	DB_Set.RAW_Files 	= Dirs.Saves + "/DB";
 
 // DON'T TOUCH !

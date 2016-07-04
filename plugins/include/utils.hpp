@@ -6,6 +6,11 @@
 
 #include "data_type.hpp"
 
+#ifdef DLL_VERSION
+#include "utils_plugin.h"
+#else
+extern "C" {
+
 uint	l_sizeof(char *src);
 char*	l_malloc(uint size);
 void	l_free(char *src);
@@ -16,9 +21,6 @@ char*	bytedump(const char *value);
 char*	strdump(const char *value);
 char*	strndump(const char *value, int len);
 void	strupdate(char **src, const char *value);
-
-char*	to_CHAR(const Wchar *wc);
-int	to_CHARi(const Wchar *wc, char *c);
 
 char	dir_exist(const char *dirname);
 char	file_exist(const char *filename);
@@ -37,5 +39,7 @@ void	hexdump(const char* function, const char* title, const void *Vbuffer, unsig
 
 void	DEBUG(const char*, ...);
 void	DEBUG2(const char*, ...);
+}
+#endif // DLL_VERSION
 
 #endif // _UTILS_HPP_

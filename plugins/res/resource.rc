@@ -1,11 +1,4 @@
 #include <windows.h>
-#include "resource.hpp"
-
-// Win32 application icon.
-
-STRINGTABLE { WINDOW_TITLE "Sharun Dream's" STR_VERSION L_VERSION }
-IDI_ICON_App ICON                       "Elin.ico"
-IDI_ICON_Sub ICON                       "TERA.ico"
 
 // Executable version information.
 VS_VERSION_INFO    VERSIONINFO
@@ -21,12 +14,12 @@ BEGIN
   BEGIN
     BLOCK "080904b0"
     BEGIN
-      VALUE "InternalName", "Sharun Dream's"
-      VALUE "OriginalFilename", "Sharun_Dream.exe"
+      VALUE "InternalName", "Sharun_Plugin.dll"
+      VALUE "OriginalFilename", "Sharun_Plugin.dll"
       VALUE "CompanyName", "The Loli's Company"
-      VALUE "FileDescription", "Sharun Dream's"
+      VALUE "FileDescription", "Plugin: Sharun Dream's"
       VALUE "LegalCopyright", "©2016 The Loli's Company"
-      VALUE "ProductName", "Sharun Dream's"
+      VALUE "ProductName", "Sharun_Plugin.dll"
       VALUE "FileVersion", L_VERSION
       VALUE "ProductVersion", L_VERSION
     END

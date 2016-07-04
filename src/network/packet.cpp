@@ -140,7 +140,7 @@ ushort packet::write(void* src, ushort len)
 ushort packet::write(char* src)
 {
 	size_t len = 0;
-	void *src_t = str_str(src, &len);
+	void *src_t = str_n_str8_16(src, &len);
 	len = write(src_t, len);
 	free(src_t);
 	pos += len;
@@ -174,7 +174,7 @@ byte* packet::read(ushort len)
 ushort packet::read(char* dst)
 {
 	ushort len = 0;
-	len = strcpy16(dst, (char16_t*)&raw[pos]);
+	len = strcpy16_8(dst, (char16_t*)&raw[pos]);
 	pos += len;
 	return len;
 }
@@ -184,7 +184,7 @@ char* packet::read_Str()
 	ushort len = 0;
 	len = str_strlen((char16_t*)&raw[pos]);
 	char *dst_t = new char[len + 1];
-	len = strcpy16(dst_t, (char16_t*)&raw[pos]);
+	len = strcpy16_8(dst_t, (char16_t*)&raw[pos]);
 	pos += len;
 	return dst_t;
 }

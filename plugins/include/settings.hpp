@@ -20,8 +20,9 @@ class settings {
 		struct Dirs {
 			std::string Saves;
 			std::string Logs;
-			std::string OpCodes;
 			std::string WWW;
+			std::string OpCodes;
+			std::string Plugins;
 			std::string Guild_Logo;
 			struct Settings {
 				std::string Account;

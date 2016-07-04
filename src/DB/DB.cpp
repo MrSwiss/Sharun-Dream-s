@@ -224,9 +224,9 @@ char16_t* database::Query_S(char *Query, char16_t *ret)
 		char ** Row = Next_Row(SQL_Comm->result);
 		if (Row && Row[0]) {
 			if (ret)
-				strcpy16(ret, Row[0]);
+				strcpy8_16(ret, Row[0]);
 			else
-				ret = str_str(Row[0]);
+				ret = str_str8_16(Row[0]);
 		}
 		Result_Clear(SQL_Comm->result);
 		delete SQL_Comm;

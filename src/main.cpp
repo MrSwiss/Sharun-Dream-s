@@ -12,6 +12,8 @@ sharun_t *Sharun = NULL;
 
 pthread_pause_t main_pause;
 //*******************************************************************************************
+void Plugin_Init();
+//*******************************************************************************************
 void intHandler(int useless)
 {
 	Sharun->Settings.main_run = false;
@@ -34,8 +36,14 @@ int main(int argc, const char *argv[])
 
 	signal(SIGINT, intHandler);
 
+	if (!Sharun->OpCodes.load()) {
+		DEBUG("ERROR: No OpCode was found ! Exiting...\n");
+		goto Main_EXITER;
+	}
 	Sharun->DB.start();
 	Network->start();
+
+	Plugin_Init();
 
 //	pthread_pause_wait(&main_pause);
 
@@ -53,6 +61,7 @@ int main(int argc, const char *argv[])
 	}
 	Sharun->Settings.main_run = false;
 
+Main_EXITER:
 	delete Network;
 	Fixed_thread_Close();
 	thread_L_cleanup();

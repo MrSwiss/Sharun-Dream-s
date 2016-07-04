@@ -1,17 +1,17 @@
 L_VERSION = 2.0.0
 
+SubDirX = ${SubDir}plugins/
+WORK = Sharun_Dream
+OUT_PLUGIN_PATH = Sharun_Saves/Plugins/
+include ${SubDirX}Makefile
+
 HEADERS = 
-DIRS = ${SubDir}src ${SubDir}src/DB ${SubDir}src/DB/2_Ram ${SubDir}src/OpCodes ${SubDir}src/Calc ${SubDir}src/network ${SubDir}src/network/teraCrypt ${SubDir}src/network/Client ${SubDir}src/network/Server ${SubDir}src/network/Broadcast ${SubDir}src/network/Comm/*
-OpCodes_def_recv_DIR = $(foreach dir,${SubDir}src/network/Comm/*,$(wildcard $(dir)/C_*)) $(wildcard src/network/Client/*.c)
-OpCodes_def_send_DIR = $(foreach dir,${SubDir}src/network/Comm/*,$(wildcard $(dir)/S_*)) $(wildcard ${SubDir}src/network/Server/*.c) $(wildcard ${SubDir}src/network/Broadcast/*.c)
+DIRS = ${SubDir}src ${SubDir}src/DB ${SubDir}src/DB/2_Ram ${SubDir}src/OpCodes ${SubDir}src/Calc ${SubDir}src/network ${SubDir}src/network/teraCrypt ${SubDir}src/network/Broadcast
 OBJS = 
 OBJS_L = 
 OBJS_W = build/win32_resource.o
-INCLUDE_DIRS = -I. -I./${SubDir} -I./${SubDir}src -I./${SubDir}src/include -I./${SubDir}res
+INCLUDE_DIRS = -I. -I./${SubDir} -I./${SubDir}include -I./${SubDir}src -I./${SubDir}src/include -I./${SubDir}plugins/include -I./${SubDir}res
 EXT = 
-WORK = Sharun_Dream
-LIBS = $(notdir $(wildcard ${SubDir}Libs/*))
-LIB = 
 
 CC = gcc
 C+ = g++
@@ -28,11 +28,11 @@ endif
 
 CFLAGS += ${WARNS} $(MACHDEP) -DL_VERSION=\"$(L_VERSION)\" -DNO_ERROR_FILE
 #-DNO_ERROR
-LDFLAGS += -lz -lm $(addprefix -L${SubDir}Libs/, $(LIB))
+LDFLAGS += -lz -lm -ldl
 
 ifeq ($(OS), Windows_NT)
 	CFLAGS += -D WIN32 -D _WIN32_IE=0x0501 -D WINVER=0x600 -D _WIN32_WINNT=0x600 -D UNICODE -D _UNICODE
-	LDFLAGS += -L./${SubDir} -L./lib/win32 -lws2_32 -static-libgcc -static-libstdc++
+	LDFLAGS += -L./${SubDir} -L./lib/win32 -lws2_32 -static-libgcc -static-libstdc++ -Wl,--export-all-symbols -Wl,--enable-auto-import
 #	-mwindows -Wl,--subsystem,windows
 	ifeq ($(MSYSTEM), MXE)
 		CFLAGS += -DMXE `mysql_config --cflags`
@@ -47,8 +47,8 @@ ifeq ($(OS), Windows_NT)
 	DLL = .dll
 	BIN_PATH = /bin/
 else
-	CFLAGS += -fPIC `mysql_config --cflags`
-	LDFLAGS += $(LDFLAGS_C) `mysql_config --libs`
+	CFLAGS += `mysql_config --cflags`
+	LDFLAGS += `mysql_config --libs` -Wl,--export-dynamic
 	OBJS += ${OBJS_L}
 	SYS := unix
 	DLL = .so
@@ -56,12 +56,6 @@ endif
 
 CPPFLAGS := ${CFLAGS} -std=c++11
 CFLAGS += -std=gnu99
-
-LIBS_SRC = $(addprefix ${SubDir}Libs/, $(LIBS))
-LIBS_SRC := ${LIBS_SRC} $(addsuffix /src, $(LIBS_SRC))
-
-INCLUDE_DIRS += $(addprefix -I./, $(LIBS_SRC))
-DIRS += $(LIBS_SRC)
 
 SRC = $(foreach dir,$(DIRS),$(wildcard $(dir)/*.c))
 SRC += $(foreach dir,$(DIRS),$(wildcard $(dir)/*.cpp))
@@ -71,18 +65,9 @@ OBJS += $(addprefix build/$(SYS)_, $(SRC))
 OBJS := $(OBJS:.c=.o)
 OBJS := $(OBJS:.cpp=.o)
 
-LIB_F := $(addprefix -l, $(LIB))
-LIB_F := $(addsuffix _$(SYS), $(LIB_F))
-LDFLAGS := $(LIB_F) $(LDFLAGS)
-
-OpCodes_def_recv_DIR := $(basename $(notdir $(OpCodes_def_recv_DIR)))
-OpCodes_def_send_DIR := $(basename $(notdir $(OpCodes_def_send_DIR)))
-
-WORK := $(addsuffix $(EXT), $(WORK))
+WORK2 := $(addsuffix $(EXT), ${WORK})
 Virg = ,
 R_VERSION = $(subst .,$(Virg),$(L_VERSION))
-
-all: build $(addsuffix .a, $(LIB)) ${WORK}
 
 zip:
 	@echo Make src.tar.bz2
@@ -100,22 +85,9 @@ run: all
 valgrind: all
 	valgrind --tool=memcheck --track-origins=yes --main-stacksize=100 ./Sharun_Dream 1
 
-Sharun_Dream$(EXT): ${OBJS} $(addsuffix .a, $(LIB))
+$(WORK2): ${OBJS}
 	@echo $(notdir $@)
 	@${C+} -o "$@" ${OBJS} ${LDFLAGS}
-
-clean: $(addsuffix .E, $(LIB))
-	@rm -rf build ${WORK}
-
-build:
-	@mkdir $@
-
-%.a: lib
-	@echo $(notdir $*)
-	@${MAKE} -C libs/$*
-
-%.E: lib
-	@${MAKE} -C libs/$* clean
 
 build/$(SYS)_%.o: */%.c
 	@echo $(notdir $@)
@@ -159,7 +131,7 @@ build/$(SYS)_%.o: */*/*/*/*/*/%.cpp
 	@echo $(notdir $@)
 	@${C+} ${CPPFLAGS} ${INCLUDE_DIRS} -c $< -o $@
 
-build/win32_resource.o: ${SubDir}res/resource.rc ${SubDir}res/resource.hpp
+build/$(SYS)_resource.o: ${SubDir}res/resource.rc ${SubDir}res/resource.hpp
 	@echo $(notdir $@)
-	@${RC} -I./${SubDir}include -I./${SubDir}res -DR_VERSION=$(R_VERSION) -DL_VERSION=\\\"$(L_VERSION)\\\" -DRX_VERSION=$(R_VERSION) -DLX_VERSION=\\\"$(L_VERSION)\\\" -i $< -o $@
+	@${RC} -I./${SubDir}include -I./${SubDir}res -DR_VERSION=$(R_VERSION) -DL_VERSION=\\\"$(L_VERSION)\\\" -i $< -o $@
 

@@ -74,14 +74,14 @@ char *bytedump(const char *value)
 
 char *strdump(const char *value)
 {
-	char *dst = (char*)malloc(strlen(value)+1);
+	char *dst = new char[strlen(value)+1];
 	strcpy(dst, value);
 	return dst;
 }
 
 char *strndump(const char *value, int len)
 {
-	char *dst = (char*)malloc(len+1);
+	char *dst = new char[len+1];
 	memset(dst, 0, len+1);
 	strncpy(dst, value, len);
 	return dst;
@@ -89,7 +89,7 @@ char *strndump(const char *value, int len)
 
 void strupdate(char **src, const char *value)
 {
-	if (*src) free(*src);
+	if (*src) delete (*src);
 	*src = strdump(value);
 }
 

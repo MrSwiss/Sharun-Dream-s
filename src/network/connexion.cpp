@@ -306,7 +306,7 @@ DEBUG("%s (%i) :: Detect a browser...\n", __func__, __LINE__);
 	hexdump(__func__, "Packet", packet_l->raw, packet_l->size);
 	hexdump(__func__, "Packet + 23", packet_l->raw + 23, packet_l->size - 23);
 			char16_t *Name = (char16_t*)&packet_l->raw[23];
-char *tmp = str_str(Name);
+char *tmp = str_str16_8(Name);
 printf("alpha is:\n\t%s\n", tmp);
 printf("strcmp16 is:\n\t%i\n", strcmp16(Name, u"clofriwen"));
 free(tmp);

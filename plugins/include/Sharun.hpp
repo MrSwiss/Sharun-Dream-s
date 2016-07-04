@@ -14,7 +14,9 @@
 #include "data_type.hpp"
 #include "settings.hpp"
 #include "DB.hpp"
+#include "player.hpp"
 #include "packet.hpp"
+#include "OpCodes.hpp"
 #include "connexion.hpp"
 #include "utils.hpp"
 
@@ -29,7 +31,14 @@ typedef struct sharun_t {
 	uint	version = 1;
 	settings	Settings;
 	database	DB;
+	opcodes 	OpCodes;
 } sharun_t;
+
+typedef struct plugin_t {
+	void *handle;
+	void (*init) ();
+	void (*uninit) ();
+} plugin_t;
 
 extern sharun_t *Sharun;
 
