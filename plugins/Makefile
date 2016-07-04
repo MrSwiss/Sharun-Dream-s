@@ -5,7 +5,7 @@ DIRS_P = $(wildcard ${SubDirX}src/*)
 SRC_P = 
 OBJS_P = 
 OBJS_L_P = 
-OBJS_W_P = CallBack_Plugin_2.o resource_plugin.o
+OBJS_W_P = CallBack_Plugin.o resource_plugin.o
 INCLUDE_DIRS_P = -I. -I./${SubDirX} -I./${SubDirX}include -I./${SubDirX}src -I./${SubDirX}src/include -I./${SubDirX}res
 EXT = 
 
@@ -80,11 +80,7 @@ plugins: build ${PLG_P}
 	@echo "	"$(notdir $@)
 	@${C+} ${CPPFLAGS_P} ${LDFLAGS_P} ${INCLUDE_DIRS_P} $(wildcard $(addsuffix /*.c, $(basename $@))) $(wildcard $(addsuffix /*.cpp, $(basename $@))) ${RCF} ${OBJS_P} -shared -Wl,-soname,$@ -o $(addprefix $(OUT_PLUGIN_PATH),$(notdir $@))
 
-build/$(SYS)_CallBack_Plugin_1.o: ${SubDirX}src/common/CallBack_Plugin.c
-	@echo "	"$(notdir $@)
-	@${CC} ${CFLAGS_P} ${INCLUDE_DIRS} -c $< -o $@
-
-build/$(SYS)_CallBack_Plugin_2.o: ${SubDirX}src/common/CallBack_Plugin.cpp
+build/$(SYS)_CallBack_Plugin.o: ${SubDirX}src/common/CallBack_Plugin.cpp
 	@echo "	"$(notdir $@)
 	@${C+} ${CPPFLAGS_P} ${INCLUDE_DIRS} -c $< -o $@
 
