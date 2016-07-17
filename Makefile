@@ -102,6 +102,7 @@ valgrind: all
 
 $(LIBSHARUN): ${OBJS_LIB}
 	@echo $(notdir $@)
+	@rm -f ${WORK2} ${LIBSHARUN} $(OUT_PLUGIN_PATH){,*/}*$(DLL)
 	@${AR} rc $@ $^
 
 $(WORK2): ${OBJS}

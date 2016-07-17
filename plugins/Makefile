@@ -82,7 +82,7 @@ all: build ${LIBSHARUN} ${WORK2} plugins
 -include $(OBJSD_P) $(PLGD_P)
 
 clean:
-	@rm -rf build ${WORK2} ${LIBSHARUN} $(OUT_PLUGIN_PATH)*.{so,dll}
+	@rm -rf build ${WORK}{,.exe} $(OUT_PLUGIN_PATH){,*/}*.{so,dll}
 
 build:
 	@mkdir -p $@/$(SYS)/Plugins
@@ -101,7 +101,9 @@ plugins: build $(OBJSD_P) $(PLGD_P) ${PLG_P} ${LIBSHARUN}
 	@echo -en $(foreach dirX, $(subst ${SubDirX}src/,build/$(SYS)/Plugins/,$(subst .c,.o,$(wildcard $(addsuffix /*.c, $(subst build/$(SYS)/Plugins/,${SubDirX}src/,$(subst $(OUT_PLUGIN_PATH),${SubDirX}src/,$*)))))), $(dirX)" \\\\\\n") >> $@
 	@echo -en $(foreach dirX, $(subst ${SubDirX}src/,build/$(SYS)/Plugins/,$(subst .cpp,.o,$(wildcard $(addsuffix /*.cpp, $(subst build/$(SYS)/Plugins/,${SubDirX}src/,$(subst $(OUT_PLUGIN_PATH),${SubDirX}src/,$*)))))), $(dirX)" \\\\\\n") >> $@
 	@echo "" >> $@
+	@echo -n ""$(foreach dirX, $(wildcard $(addsuffix /*.c, $(subst build/$(SYS)/Plugins/,${SubDirX}src/,$(subst $(OUT_PLUGIN_PATH),${SubDirX}src/,$*)))), `${CC} -MM ${CFLAGS_P} ${INCLUDE_DIRS_P} $(dirX) | sed -e 's/.*:/$(subst /,\/,$(subst .c,.o,$(dirX))):/' >> $@ && echo '' >> $@`)
 	@echo -n ""$(foreach dirX, $(wildcard $(addsuffix /*.cpp, $(subst build/$(SYS)/Plugins/,${SubDirX}src/,$(subst $(OUT_PLUGIN_PATH),${SubDirX}src/,$*)))), `${C+} -MM ${CPPFLAGS_P} ${INCLUDE_DIRS_P} $(dirX) | sed -e 's/.*:/$(subst /,\/,$(subst .cpp,.o,$(dirX))):/' >> $@ && echo '' >> $@`)
+	@echo -e $*"/%.o: ${SubDirX}src/*/*/%.c\\n\t@echo \"	\"\$$(dir \$$(subst build/\$$(SYS)/Plugins/, ,\$$@))\$$(notdir \$$@)\\n\t@\$${CC} -c \$${CFLAGS_P} \$${INCLUDE_DIRS_P} \$$< -o \$$@\n" >> $@
 	@echo -e $*"/%.o: ${SubDirX}src/*/*/%.cpp\\n\t@echo \"	\"\$$(dir \$$(subst build/\$$(SYS)/Plugins/, ,\$$@))\$$(notdir \$$@)\\n\t@\$${C+} -c \$${CPPFLAGS_P} \$${INCLUDE_DIRS_P} \$$< -o \$$@\n" >> $@
 
 %$(DLL):
@@ -109,9 +111,15 @@ plugins: build $(OBJSD_P) $(PLGD_P) ${PLG_P} ${LIBSHARUN}
 	@mkdir -p $(dir $@)
 	@${C+} ${CPPFLAGS_P} ${INCLUDE_DIRS_P} $^ -shared -Wl,-soname,$(notdir $@) -o $@ ${LDFLAGS_P}
 
+build/$(SYS)/Plugins/%.o: ${SubDirX}src/common/%.c build
+	@echo "	"$(notdir $@)
+	@${CC} -c ${CFLAGS_P} ${INCLUDE_DIRS_P} $< -o $@
 build/$(SYS)/Plugins/%.o: ${SubDirX}src/common/%.cpp build
 	@echo "	"$(notdir $@)
 	@${C+} -c ${CPPFLAGS_P} ${INCLUDE_DIRS_P} $< -o $@
+build/$(SYS)/Plugins/%.d: ${SubDirX}src/common/%.c build
+	@echo "   "$(notdir $@)
+	@${CC} -MM ${CFLAGS_P} ${INCLUDE_DIRS_P} $< | sed -e 's/.*:/$(subst /,\/,$(subst .d,.o,$@)):/' > $@
 build/$(SYS)/Plugins/%.d: ${SubDirX}src/common/%.cpp build
 	@echo "   "$(notdir $@)
 	@${C+} -MM ${CPPFLAGS_P} ${INCLUDE_DIRS_P} $< | sed -e 's/.*:/$(subst /,\/,$(subst .d,.o,$@)):/' > $@
