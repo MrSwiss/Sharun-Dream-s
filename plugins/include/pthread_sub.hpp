@@ -21,11 +21,4 @@ void pthread_pause_destroy(pthread_pause_t*);
 void pthread_pause_wait(pthread_pause_t*);
 void pthread_pause_signal(pthread_pause_t*);
 
-unsigned int get_thread_used();
-void add_thread_used();
-void del_thread_used();
-void set_thread_max(unsigned int max);
-unsigned int get_thread_max();
-void thread_max_count(void*);
-
 #endif // _PTHREAD_SUB_HPP_

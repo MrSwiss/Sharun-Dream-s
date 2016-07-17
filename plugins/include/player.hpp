@@ -7,7 +7,7 @@ class player {
 
 	public:
 		player(uint);
-		~player();
+//		~player();
 		uint	Character_Id;
 		uint	SUBID;
 		uint	Class_Id;
@@ -26,5 +26,13 @@ class player {
 		ulong	end_pay;
 		short	OpCode_GID;
 };
+
+#ifdef DLL_VERSION
+extern player*	(*new_player)(uint);
+#else
+extern "C" {
+player*	new_player(uint);
+}
+#endif // DLL_VERSION
 
 #endif // _PLAYER_HPP_

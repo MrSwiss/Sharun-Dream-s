@@ -299,17 +299,17 @@ DEBUG("%s (%i) :: Detect a browser...\n", __func__, __LINE__);
 			delete Key_l;
 			packet *packet_l = new packet();
 			connex_t->Recv(packet_l);
-	hexdump(__func__, "Packet", packet_l->raw, packet_l->size);
 			delete packet_l;
 			packet_l = new packet();
 			connex_t->Recv(packet_l);
-	hexdump(__func__, "Packet", packet_l->raw, packet_l->size);
+			Sharun->OpCodes.Recv(NULL, packet_l);
+/*	hexdump(__func__, "Packet", packet_l->raw, packet_l->size);
 	hexdump(__func__, "Packet + 23", packet_l->raw + 23, packet_l->size - 23);
 			char16_t *Name = (char16_t*)&packet_l->raw[23];
 char *tmp = str_str16_8(Name);
 printf("alpha is:\n\t%s\n", tmp);
 printf("strcmp16 is:\n\t%i\n", strcmp16(Name, u"clofriwen"));
-free(tmp);
+free(tmp);*/
 		}
 	}
 	thread->internal_delete();

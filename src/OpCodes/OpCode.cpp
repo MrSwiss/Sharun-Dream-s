@@ -32,6 +32,55 @@ opcodes::opcodes()
 	}
 }
 
+void opcodes::Set_Recv(const char *opcode_n, void* (*opcode_f)(void**))
+{
+	for (int i=0; i < Max_OpCode_List; i++) {
+		if (strlen(list[i].version)) {
+			int j=0;
+			bool loop_me = true;
+			while (loop_me && j < PACKET_MAX_SIZE) {
+				if (list[i].OpName[j] && !strcmp(list[i].OpName[j], opcode_n)) {
+					loop_me = false;
+				} else
+					j++;
+			}
+			if (j < PACKET_MAX_SIZE) {
+				if (!strcmp(opcode_n, "C_LOGIN_ARBITER"))
+					list[i].detect = j;
+					list[i].Recv[j] = (void*(*)(player*, packet*)) opcode_f;
+			}
+		}
+	}
+}
+
+void opcodes::Set_Send(int opcode_id, void* (*opcode_f)(void**))
+{
+	
+	Send[opcode_id] = opcode_f;
+}
+
+void* opcodes::Recv(player* player_l, packet* packet_l)
+{
+	void *ret = NULL;
+	int GID = -1;
+	if (player_l)
+		GID = player_l->OpCode_GID;
+	else {
+		for (int i=0; GID < 0 && i < Max_OpCode_List; i++) {
+			if (strlen(list[i].version) && list[i].detect >= 0 && list[i].detect == packet_l->id) 
+				GID = i;
+		}
+		if (GID < 0)
+			return NULL;
+	}
+	ret = list[GID].Recv[packet_l->id](player_l, packet_l);
+	if (!player_l && ret) {
+		player_l = (player*) ret;
+		player_l->OpCode_GID = GID;
+	}
+	return ret;
+}
+
 bool opcodes::load()
 {
 	DIR *pdir;
@@ -53,7 +102,7 @@ bool opcodes::load()
 						fscanf(fp, " %s = %i", tmpS, &tmpI);
 						if (strlen(tmpS)) {
 							int i=0;
-							while (i < OPC_MAX && OpCode_Gen[i] && !strcmp(OpCode_Gen[i], tmpS))
+							while (i < OPC_MAX && OpCode_Gen[i] && strcmp(OpCode_Gen[i], tmpS))
 								i++;
 							if (i < OPC_MAX) {
 								list[size].OpName[tmpI] = OpCode_Gen[i];

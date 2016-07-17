@@ -20,48 +20,42 @@ class packet
 		ushort	pos;
 		byte*	raw;
 
-		int	seek(int, int);
-		bool	eof();
+		virtual int	seek(int, int);
+		virtual bool	eof();
 
 		virtual bool	swap();
 		virtual bool	swap(ushort);
-		packet*	clone();
-		ushort	full_size();
-		void	resize(int);
-		void	get_header();
-		virtual void	set_header();
-		virtual void	set_header(ushort);
+		virtual packet*	clone();
+		virtual ushort	full_size();
+		virtual void	resize(int);
+		virtual void	get_header();
+		virtual void	set_header(int);
 
 		virtual ushort	write(void*, ushort);
-		virtual ushort	write(char*);
-		virtual ushort	write(char16_t*);
-		virtual ushort	write(uchar);
-		virtual ushort	write(ushort);
-		virtual ushort	write(short);
-		virtual ushort	write(uint);
-		virtual ushort	write(int);
-		virtual ushort	write(ulong);
-		virtual ushort	write(long);
-		virtual ushort	write(float);
+		virtual ushort	write_C(char*);
+		virtual ushort	write_S(char16_t*);
+		virtual ushort	write_1(uchar);
+		virtual ushort	write_2(ushort);
+		virtual ushort	write_4(uint);
+		virtual ushort	write_8(ulong);
+		virtual ushort	write_F(float);
 
 		virtual ushort	read(void*, ushort);
-		virtual byte*	read(ushort);
-		virtual ushort	read(char*);
-		char*	read_Str();
-		char16_t*	read_S();
-		uchar	read_1();
-		ushort	read_2();
-		uint	read_4();
-		ulong	read_8();
-		float	read_F();
-		virtual ushort	read(uchar*);
-		virtual ushort	read(ushort*);
-		virtual ushort	read(short*);
-		virtual ushort	read(uint*);
-		virtual ushort	read(int*);
-		virtual ushort	read(ulong*);
-		virtual ushort	read(long*);
-		virtual ushort	read(float*);
+		virtual char*	read_C(char*);
+		virtual char16_t*	read_S(char16_t*);
+		virtual uchar	read_1();
+		virtual ushort	read_2();
+		virtual uint	read_4();
+		virtual ulong	read_8();
+		virtual float	read_F();
 };
+
+#ifdef DLL_VERSION
+extern packet*	(*new_packet)();
+#else
+extern "C" {
+packet*	new_packet();
+}
+#endif // DLL_VERSION
 
 #endif // _PACKET_HPP_

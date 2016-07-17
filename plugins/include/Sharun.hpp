@@ -19,6 +19,7 @@
 #include "OpCodes.hpp"
 #include "connexion.hpp"
 #include "utils.hpp"
+#include "plugins.hpp"
 
 /*********************************************************************
  * WARNING :
@@ -33,12 +34,6 @@ typedef struct sharun_t {
 	database	DB;
 	opcodes 	OpCodes;
 } sharun_t;
-
-typedef struct plugin_t {
-	void *handle;
-	void (*init) ();
-	void (*uninit) ();
-} plugin_t;
 
 extern sharun_t *Sharun;
 

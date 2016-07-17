@@ -1,7 +1,12 @@
 #include "Sharun.hpp"
-#include "internal/DB.hpp"
+#include "DB.hpp"
 
 #include <cstdarg>
+
+extern void	(*MySQL_Data_Seek_PLG)(void*, ulong);
+extern char**	(*MySQL_Fetch_Row_PLG)(void*);
+extern void	(*MySQL_Free_Result_PLG)(void*);
+extern void	(*MySQL_Add_PLG)(SQL_QUEUE*);
 
 SQL_QUEUE::SQL_QUEUE(char *req, bool fast)
 {
@@ -37,11 +42,6 @@ void SQL_QUEUE::wait()
 	pthread_pause_wait(resume);
 }
 
-void SQL_QUEUE::signal()
-{
-	pthread_pause_signal(resume);
-}
-
 bool is_MySQL_threaded()
 {
 	if (Sharun->Settings.Thread.DataBase.Fast > 0)
@@ -49,34 +49,12 @@ bool is_MySQL_threaded()
 	return false;
 }
 
-void database::start()
-{
-	thread_list *thread = NULL;
-	if (is_MySQL_threaded()) {
-		for (int i=0; DB_Set.Login && i < Sharun->Settings.Thread.DataBase.Fast; i++) {
-			thread = new thread_list();
-			thread->sub_param = 1;
-			if (!thread->start((void*)MySQL_Thread, thread))
-				DEBUG("%s (%i) :: Could not start MySQL thread %i !\n", __FILE__, __LINE__, i);
-			else
-				DEBUG("%s (%i) :: MySQL fast thread %i started.\n", __FILE__, __LINE__, i);
-		}
-		for (int i=0; DB_Set.Login && i < Sharun->Settings.Thread.DataBase.Slow; i++) {
-			thread = new thread_list();
-			if (!thread->start((void*)MySQL_Thread, thread))
-				DEBUG("%s (%i) :: Could not start MySQL thread %i !\n", __FILE__, __LINE__, i);
-			else
-				DEBUG("%s (%i) :: MySQL slow thread %i started.\n", __FILE__, __LINE__, i);
-		}
-	}
-}
-
 void database::Seek(void *Result, ulong pos)
 {
 	if (!Result)
 		return;
 	if (is_MySQL_threaded())
-		mysql_data_seek((MYSQL_RES*)Result, pos);
+		MySQL_Data_Seek_PLG(Result, pos);
 }
 
 char **database::Next_Row(void *Result)
@@ -84,8 +62,8 @@ char **database::Next_Row(void *Result)
 	if (!Result)
 		return NULL;
 	if (is_MySQL_threaded()) {
-		MYSQL_ROW row;
-		if ((row = mysql_fetch_row((MYSQL_RES*)Result)) != NULL)
+		char ** row;
+		if ((row = MySQL_Fetch_Row_PLG(Result)) != NULL)
 			return row;
 	}
 	return NULL;
@@ -96,7 +74,7 @@ void database::Result_Clear(void *Result)
 	if (!Result)
 		return;
 	if (is_MySQL_threaded())
-		mysql_free_result((MYSQL_RES*)Result);
+		MySQL_Free_Result_PLG(Result);
 }
 
 void* database::Query_Fast(char *Query, bool responce)
@@ -107,7 +85,7 @@ void* database::Query_Fast(char *Query, bool responce)
 	if (is_MySQL_threaded()) {
 		SQL_QUEUE *SQL_Comm = new SQL_QUEUE(Query, true);
 		SQL_Comm->responce = responce;
-		MySQL_Add(SQL_Comm);
+		MySQL_Add_PLG(SQL_Comm);
 		SQL_Comm->wait();
 		ret = SQL_Comm->result;
 		delete SQL_Comm;
@@ -133,7 +111,7 @@ void database::Query_Slow(char *Query)
 	if (is_MySQL_threaded()) {
 		SQL_QUEUE *SQL_Comm = new SQL_QUEUE(Query, false);
 		SQL_Comm->responce = false;
-		MySQL_Add(SQL_Comm);
+		MySQL_Add_PLG(SQL_Comm);
 	}
 }
 void database::Query_Slow2(char *Query, ...)
@@ -157,7 +135,7 @@ int database::Query_int(char *Query, int *ret)
 	if (is_MySQL_threaded()) {
 		SQL_QUEUE *SQL_Comm = new SQL_QUEUE(Query, true);
 		SQL_Comm->stored = false;
-		MySQL_Add(SQL_Comm);
+		MySQL_Add_PLG(SQL_Comm);
 		SQL_Comm->wait();
 		char ** Row = Next_Row(SQL_Comm->result);
 		if (Row && Row[0])
@@ -179,7 +157,7 @@ long database::Query_long(char *Query, long *ret)
 	if (is_MySQL_threaded()) {
 		SQL_QUEUE *SQL_Comm = new SQL_QUEUE(Query, true);
 		SQL_Comm->stored = false;
-		MySQL_Add(SQL_Comm);
+		MySQL_Add_PLG(SQL_Comm);
 		SQL_Comm->wait();
 		char ** Row = Next_Row(SQL_Comm->result);
 		if (Row && Row[0])
@@ -201,7 +179,7 @@ float database::Query_float(char *Query, float *ret)
 	if (is_MySQL_threaded()) {
 		SQL_QUEUE *SQL_Comm = new SQL_QUEUE(Query, true);
 		SQL_Comm->stored = false;
-		MySQL_Add(SQL_Comm);
+		MySQL_Add_PLG(SQL_Comm);
 		SQL_Comm->wait();
 		char ** Row = Next_Row(SQL_Comm->result);
 		if (Row && Row[0])
@@ -219,7 +197,7 @@ char16_t* database::Query_S(char *Query, char16_t *ret)
 	if (is_MySQL_threaded()) {
 		SQL_QUEUE *SQL_Comm = new SQL_QUEUE(Query, true);
 		SQL_Comm->stored = false;
-		MySQL_Add(SQL_Comm);
+		MySQL_Add_PLG(SQL_Comm);
 		SQL_Comm->wait();
 		char ** Row = Next_Row(SQL_Comm->result);
 		if (Row && Row[0]) {
@@ -241,7 +219,7 @@ char* database::Query_char(char *Query, char *ret)
 	if (is_MySQL_threaded()) {
 		SQL_QUEUE *SQL_Comm = new SQL_QUEUE(Query, true);
 		SQL_Comm->stored = false;
-		MySQL_Add(SQL_Comm);
+		MySQL_Add_PLG(SQL_Comm);
 		SQL_Comm->wait();
 		char ** Row = Next_Row(SQL_Comm->result);
 		if (Row && Row[0]) {

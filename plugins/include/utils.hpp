@@ -6,11 +6,6 @@
 
 #include "data_type.hpp"
 
-#ifdef DLL_VERSION
-#include "utils_plugin.hpp"
-#else
-extern "C" {
-
 uint	l_sizeof(char *src);
 char*	l_malloc(uint size);
 void	l_free(char *src);
@@ -37,9 +32,13 @@ char*	l_realpath(const char * src);
 
 void	hexdump(const char* function, const char* title, const void *Vbuffer, unsigned long index);
 
+#ifdef DLL_VERSION
+extern void (*DEBUG)(const char*, ...);
+extern void (*DEBUG2)(const char*, ...);
+#else
+extern "C" {
 void	DEBUG(const char*, ...);
 void	DEBUG2(const char*, ...);
-
 }
 #endif // DLL_VERSION
 

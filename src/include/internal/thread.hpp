@@ -1,7 +1,7 @@
 #ifndef _THREAD_LIST_HPP_
 #define _THREAD_LIST_HPP_
 
-#include "internal/pthread_sub.hpp"
+#include "internal/pthread_max.hpp"
 
 class thread_list {
 	protected:
